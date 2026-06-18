@@ -8,7 +8,7 @@ export default function Navbar({ activeSlide = 0 }: { activeSlide?: number }) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/signin");
+    router.push("/sign-in");
   };
 
   return (
@@ -37,7 +37,7 @@ export default function Navbar({ activeSlide = 0 }: { activeSlide?: number }) {
       </Link>
 
       <Link
-        href="/signin"
+        href="/sign-in"
         className="btn-ghost nav-btn"
         style={{
           padding: "10px 24px",
