@@ -1,0 +1,277 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum UserRole {
+  UGC_CREATOR
+  CLIPPER
+  SUPER_ADMIN
+  CUSTOMER_REP
+  BRAND // Added for future-proofing, though brands might be managed separately in MVP
+}
+
+enum AccountStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  LOCKED
+}
+
+enum SocialPlatform {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+  SNAPCHAT
+}
+
+enum Currency {
+  NGN
+  USDT
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SubmissionStatus {
+  // UGC Stage 1
+  CONTENT_UNDER_REVIEW
+  REVISION_REQUESTED
+  CONTENT_APPROVED
+  // UGC Stage 2 & Clipper
+  LIVE_LINK_UNDER_REVIEW
+  APPROVED
+  REJECTED
+  NOT_QUALIFIED // Failed to meet minimum views
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TransactionType {
+  EARNING
+  WITHDRAWAL
+}
+
+// -----------------------------------------------------------------------------
+// MODELS
+// -----------------------------------------------------------------------------
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model waitlist_entries {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at             DateTime? @default(now()) @db.Timestamptz(6)
+  full_name              String
+  email                  String    @unique
+  phone                  String?
+  location_city          String?
+  location_country       String?   @default("Nigeria")
+  gender                 String?
+  primary_platform       String
+  instagram_handle       String?
+  instagram_link         String?
+  tiktok_handle          String?
+  tiktok_link            String?
+  youtube_handle         String?
+  youtube_link           String?
+  twitter_handle         String?
+  twitter_link           String?
+  facebook_handle        String?
+  facebook_link          String?
+  snapchat_handle        String?
+  snapchat_link          String?
+  creator_type           String?
+  content_niches         String[]
+  content_formats        String[]
+  follower_range         String?
+  bio                    String?
+  has_worked_with_brands Boolean?  @default(false)
+  brand_count_estimate   String?
+  preferred_deal_type    String[]
+  referral_source        String?
+  referral_code          String?
+  status                 String?   @default("pending")
+  admin_notes            String?
+  waitlist_position      Int?
+
+  @@index([created_at(sort: Desc)])
+  @@index([primary_platform], map: "waitlist_entries_platform_idx")
+  @@index([status])
+}
+
+model User {
+  id                         String        @id @default(uuid())
+  email                      String        @unique
+  passwordHash               String
+  fullName                   String
+  country                    String
+  role                       UserRole
+  accountStatus              AccountStatus @default(PENDING_VERIFICATION)
+  failedVerificationAttempts Int           @default(0) // Locks after 2 fails
+
+  // Payment Details
+  bankDetails                Json?         // Stores bank name, account number, etc. (for NGN)
+  usdtWalletAddress          String?       // For international payouts (USDT)
+
+  // Balances
+  nairaBalance               Float         @default(0.0)
+  usdtBalance                Float         @default(0.0)
+
+  // Relations
+  socialAccounts             SocialAccount[]
+  applications               CampaignApplication[]
+  submissions                Submission[]
+  transactions               Transaction[]
+  reviewedApplications       CampaignApplication[] @relation("AdminReviewer")
+  reviewedSubmissions        Submission[]          @relation("AdminSubmissionReviewer")
+
+  createdAt                  DateTime      @default(now())
+  updatedAt                  DateTime      @updatedAt
+}
+
+model SocialAccount {
+  id                     String         @id @default(uuid())
+  userId                 String
+  user                   User           @relation(fields: [userId], references: [id])
+  platform               SocialPlatform
+  handle                 String?
+  
+  // OAuth Data
+  oauthConnected         Boolean        @default(false)
+  oauthToken             String?
+  oauthRefreshToken      String?
+  oauthData              Json?          // Stores raw API profile data
+  
+  // Manual Verification Fallback
+  manualVerificationUrl  String?        // Screenshot or proof link if OAuth fails
+
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  @@unique([userId, platform])
+}
+
+model Brand {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  logoUrl     String?
+  
+  campaigns   Campaign[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Campaign {
+  id               String         @id @default(uuid())
+  brandId          String
+  brand            Brand          @relation(fields: [brandId], references: [id])
+  
+  title            String
+  contentType      String         // e.g., "UGC Video", "Clip distribution"
+  brief            String         @db.Text
+  deliverables     Json           // Do's, Don'ts, content guidelines
+  requirements     Json           // Follower minimums, required platforms, etc.
+  
+  // Rules & Payouts
+  currency         Currency
+  payoutStructure  Json           // Breakdown of how much is paid per view/deliverable
+  minViewsRequired Int?           // Minimum views threshold (e.g., 1000) for Clippers
+  deadline         DateTime
+  isLive           Boolean        @default(true)
+
+  // Relations
+  applications     CampaignApplication[]
+  submissions      Submission[]
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model CampaignApplication {
+  id          String            @id @default(uuid())
+  campaignId  String
+  campaign    Campaign          @relation(fields: [campaignId], references: [id])
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  
+  status      ApplicationStatus @default(PENDING)
+  
+  // Admin Review Tracking
+  reviewedById String?
+  reviewedBy   User?             @relation("AdminReviewer", fields: [reviewedById], references: [id])
+  rejectionReason String?        @db.Text
+  
+  appliedAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([campaignId, userId])
+}
+
+model Submission {
+  id               String           @id @default(uuid())
+  campaignId       String
+  campaign         Campaign         @relation(fields: [campaignId], references: [id])
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+  
+  status           SubmissionStatus
+  attemptCount     Int              @default(1) // Max 5 allowed
+  
+  // Stage 1: Content Upload (UGC Creators)
+  contentFileUrl   String?
+  creatorNotes     String?          @db.Text
+  
+  // Stage 2: Live Link (UGC & Clippers)
+  liveSocialUrl    String?
+  trackedViews     Int              @default(0) // Pulled via OAuth or manual admin entry
+  
+  // Admin Review
+  reviewedById     String?
+  reviewedBy       User?            @relation("AdminSubmissionReviewer", fields: [reviewedById], references: [id])
+  adminNotes       String?          @db.Text    // Used for revision requests or rejection reasons
+
+  transactions     Transaction[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Transaction {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  
+  amount           Float
+  currency         Currency
+  type             TransactionType
+  status           TransactionStatus @default(PENDING)
+  
+  // If this transaction is an earning tied to a specific submission
+  submissionId     String?
+  submission       Submission?       @relation(fields: [submissionId], references: [id])
+  
+  description      String?           // e.g., "Payout for Campaign X", "Weekly Naira Payout"
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
