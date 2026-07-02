@@ -1,6 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-
-import { Request } from 'express';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { AuthService } from './auth.service';
@@ -11,13 +9,11 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  googleLogin() {
-    return;
-  }
+  async googleAuth() {} // Passport automatically redirects the browser to Google's consent screen
 
-  @Get('google/callback')
+  @Get('google/google-redirect')
   @UseGuards(GoogleAuthGuard)
-  async googleCallback(@Req() req: Request) {
-    return await this.authService.googleLogin(req.user);
+  googleAuthRedirect(@Request() req) {
+    return this.authService.googleLogin(req);
   }
 }
