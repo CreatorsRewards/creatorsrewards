@@ -13,10 +13,7 @@ import type { Response } from 'express';
 // import { GoogleAuthGuard } from './guards/google-auth.guard';
 // import { AuthService } from './services/auth.service';
 import { OAuthService } from './services/oauth.service';
-
-interface JwtAuthResponse {
-  accessToken: string;
-}
+import { JwtAuthResponse } from './interfaces/oauth-user.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +43,7 @@ export class AuthController {
     )) as JwtAuthResponse;
 
     // Redirect back to your frontend with YOUR token
-    const frontendRedirectUrl = `http://localhost:5173/auth/callback?token=${jwtContent.accessToken}`;
+    const frontendRedirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${jwtContent.accessToken}`;
     res.redirect(frontendRedirectUrl);
   }
 }
