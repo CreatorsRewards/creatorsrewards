@@ -3,7 +3,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { OAuthProvider } from '../interfaces/oauth-provider.interface';
 import { AuthService } from './auth.service';
 import { GoogleProvider } from '../providers/google.provider';
-// import { TikTokProvider } from '../providers/tiktok.provider';
+import { TikTokProvider } from '../providers/tiktok.provider';
 
 @Injectable()
 export class OAuthService {
@@ -12,11 +12,11 @@ export class OAuthService {
   constructor(
     private readonly authService: AuthService,
     private readonly googleProvider: GoogleProvider,
-    // inject other providers here
+    private readonly tiktokProvider: TikTokProvider,
   ) {
     // Register your providers
     this.providers.set('google', this.googleProvider);
-    // this.providers.set('tiktok', this.tiktokProvider);
+    this.providers.set('tiktok', this.tiktokProvider);
   }
 
   private getProvider(name: string): OAuthProvider {
