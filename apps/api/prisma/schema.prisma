@@ -6,6 +6,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -119,13 +120,16 @@ model waitlist_entries {
 
 model User {
   id                         String        @id @default(uuid())
-  email                      String        @unique
-  passwordHash               String
-  fullName                   String
-  country                    String
-  role                       UserRole
+  email                      String?        @unique
+  passwordHash               String?
+  fullName                   String?
+  country                    String?
+  role                       UserRole      @default(UGC_CREATOR)
   accountStatus              AccountStatus @default(PENDING_VERIFICATION)
   failedVerificationAttempts Int           @default(0) // Locks after 2 fails
+
+  authProvider               String        @default("local") // 'local', 'google', 'tiktok', etc.
+  authProviderId             String?       @unique           // The unique ID from Google/TikTok
 
   // Payment Details
   bankDetails                Json?         // Stores bank name, account number, etc. (for NGN)
