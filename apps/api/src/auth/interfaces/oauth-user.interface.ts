@@ -11,3 +11,7 @@ export interface OAuthUser {
 
   avatar?: string;
 }
+
+export interface JwtAuthResponse {
+  accessToken: string;
+}
