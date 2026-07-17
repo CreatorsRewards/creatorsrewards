@@ -4,13 +4,12 @@ import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from 'src/prisma.module';
 import { OAuthService } from './services/oauth.service';
 import { GoogleProvider } from './providers/google.provider';
 
 @Module({
-  imports: [PassportModule, PrismaModule, JwtModule.register({})],
+  imports: [PassportModule, PrismaModule],
   controllers: [AuthController],
   providers: [
     AuthService,
