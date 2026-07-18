@@ -11,6 +11,7 @@ export const OAUTH_PROVIDER = {
   FACEBOOK: 'facebook',
   INSTAGRAM: 'instagram',
   YOUTUBE: 'youtube',
+  X: 'x',
 } as const;
 
 export type OAuthProviderName =
