@@ -18,3 +18,25 @@ export interface GoogleUser {
   picture?: string;
   accessToken?: string;
 }
+
+export interface YouTubeTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+  token_type: string;
+}
+
+export interface YouTubeChannelResponse {
+  items: Array<{
+    id: string;
+    snippet: {
+      title: string;
+      description: string;
+      customUrl: string;
+      thumbnails: {
+        default: { url: string };
+        high: { url: string };
+      };
+    };
+  }>;
+}
