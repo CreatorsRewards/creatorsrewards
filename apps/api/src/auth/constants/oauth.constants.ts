@@ -8,6 +8,9 @@ export const OAUTH_PROVIDER = {
   TIKTOK: 'tiktok',
   GOOGLE: 'google',
   GITHUB: 'github',
+  FACEBOOK: 'facebook',
+  INSTAGRAM: 'instagram',
+  YOUTUBE: 'youtube',
 } as const;
 
 export type OAuthProviderName =
