@@ -7,6 +7,11 @@ import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from 'src/prisma.module';
 import { OAuthService } from './services/oauth.service';
 import { GoogleProvider } from './providers/google.provider';
+import { FacebookProvider } from './providers/facebook.provider';
+import { TikTokProvider } from './providers/tiktok.provider';
+import { XProvider } from './providers/x.provider';
+import { InstagramProvider } from './providers/instagram.provider';
+import { YouTubeProvider } from './providers/youtube.provider';
 
 @Module({
   imports: [PassportModule, PrismaModule],
@@ -17,6 +22,11 @@ import { GoogleProvider } from './providers/google.provider';
     GoogleAuthGuard,
     OAuthService,
     GoogleProvider,
+    FacebookProvider,
+    TikTokProvider,
+    XProvider,
+    InstagramProvider,
+    YouTubeProvider,
   ],
   exports: [OAuthService],
 })

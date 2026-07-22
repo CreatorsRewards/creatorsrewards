@@ -4,6 +4,10 @@ import { OAuthProvider } from '../interfaces/oauth-provider.interface';
 import { AuthService } from './auth.service';
 import { GoogleProvider } from '../providers/google.provider';
 import { TikTokProvider } from '../providers/tiktok.provider';
+import { FacebookProvider } from '../providers/facebook.provider';
+import { InstagramProvider } from '../providers/instagram.provider';
+import { YouTubeProvider } from '../providers/youtube.provider';
+import { XProvider } from '../providers/x.provider';
 
 @Injectable()
 export class OAuthService {
@@ -13,10 +17,18 @@ export class OAuthService {
     private readonly authService: AuthService,
     private readonly googleProvider: GoogleProvider,
     private readonly tiktokProvider: TikTokProvider,
+    private readonly facebookProvider: FacebookProvider,
+    private readonly instagramProvider: InstagramProvider,
+    private readonly youtubeProvider: YouTubeProvider,
+    private readonly xProvider: XProvider,
   ) {
     // Register your providers
     this.providers.set('google', this.googleProvider);
     this.providers.set('tiktok', this.tiktokProvider);
+    this.providers.set('facebook', this.facebookProvider);
+    this.providers.set('instagram', this.instagramProvider);
+    this.providers.set('youtube', this.youtubeProvider);
+    this.providers.set('x', this.xProvider);
   }
 
   private getProvider(name: string): OAuthProvider {
