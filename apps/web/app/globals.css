@@ -1,3 +1,15 @@
+@import "tailwindcss";
+
+/* 1. Map your custom colors to Tailwind's theme */
+@theme {
+  --color-page: var(--bg-page);
+  --color-card: var(--bg-card);
+  --color-border-main: var(--border);
+  --color-primary: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-violet: var(--violet);
+}
+
 /* ─── Design Tokens ─────────────────────────────────────── */
 :root {
   /* New Landing Palette (Matcha & Coral) */
