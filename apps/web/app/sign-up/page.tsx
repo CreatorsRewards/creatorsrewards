@@ -13,7 +13,7 @@ import {
 } from "react-icons/si";
 import React from "react";
 
-type Provider =
+export type Provider =
   | "google"
   | "tiktok"
   | "facebook"
