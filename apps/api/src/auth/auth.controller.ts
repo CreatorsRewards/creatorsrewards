@@ -1,7 +1,9 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
+  Post,
   Query,
   // Request,
   Res,
@@ -14,12 +16,29 @@ import type { Response } from 'express';
 // import { AuthService } from './services/auth.service';
 import { OAuthService } from './services/oauth.service';
 import { JwtAuthResponse } from './interfaces/oauth-user.interface';
+import { LoginDto, RegisterDto } from './dto/local-auth.dto';
+import { AuthService } from './services/auth.service';
 
 @Controller('auth')
 export class AuthController {
-  // constructor(private readonly authService: AuthService) {}
-  constructor(private readonly oauthService: OAuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly oauthService: OAuthService,
+  ) {}
 
+  // --- LOCAL AUTH ROUTES ---
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto): Promise<JwtAuthResponse> {
+    return this.authService.register(dto);
+  }
+
+  @Post('signin')
+  async signIn(@Body() dto: LoginDto): Promise<JwtAuthResponse> {
+    return this.authService.login(dto);
+  }
+
+  // --- OAUTH ROUTES ---
   @Get(':provider')
   login(@Param('provider') provider: string, @Res() res: Response) {
     // Generate a random state string here for CSRF protection if needed
