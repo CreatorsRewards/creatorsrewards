@@ -1,0 +1,7 @@
+export enum UserRole {
+  UGC_CREATOR = "UGC_CREATOR",
+  CLIPPER = "CLIPPER",
+  SUPER_ADMIN = "SUPER_ADMIN",
+  CUSTOMER_REP = "CUSTOMER_REP",
+  BRAND = "BRAND" 
+}
