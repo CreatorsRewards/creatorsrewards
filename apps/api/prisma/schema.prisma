@@ -21,6 +21,7 @@ enum UserRole {
   UGC_CREATOR
   CLIPPER
   SUPER_ADMIN
+  ADMIN
   CUSTOMER_REP
   BRAND // Added for future-proofing, though brands might be managed separately in MVP
 }
