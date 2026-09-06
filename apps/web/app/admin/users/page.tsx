@@ -78,7 +78,7 @@ export default function UserManagementPage() {
       {/* Filters & Search */}
       <div className="bg-white p-4 rounded-t-lg border border-gray-200 border-b-0 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full sm:w-auto">
-          {["All", "Creators", "Brands", "Admins"].map((tab) => (
+          {["All", "Creators", "Brands", "Admins", "Waitlist"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -104,82 +104,84 @@ export default function UserManagementPage() {
       </div>
 
       {/* Data Table */}
-      <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm overflow-x-auto">
-        <table className="w-full text-left text-sm text-gray-600">
-          <thead className="bg-gray-50 border-b border-gray-200 text-gray-700 uppercase font-medium">
-            <tr>
-              <th className="px-6 py-4">User Details</th>
-              <th className="px-6 py-4">Role</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Joined</th>
-              <th className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {users.map((user) => (
-              <tr
-                key={user.id}
-                className="hover:bg-gray-50 transition-colors group"
-              >
-                <td className="px-6 py-4">
-                  <p className="font-medium text-gray-900">{user.name}</p>
-                  <p className="text-gray-500 text-xs mt-0.5">{user.email}</p>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    {user.role === "Creator" && (
-                      <Users className="w-4 h-4 text-blue-500" />
-                    )}
-                    {user.role === "Brand" && (
-                      <Building className="w-4 h-4 text-purple-500" />
-                    )}
-                    {user.role === "Admin" && (
-                      <Shield className="w-4 h-4 text-gray-700" />
-                    )}
-                    <span>{user.role}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                      user.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : user.status === "Pending KYC"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">{user.joinDate}</td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                      title="Edit User"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
-                      title="Delete/Suspend"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"
-                      title="More Options"
-                    >
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+      {activeTab.toLowerCase() === "all" && (
+        <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-600">
+            <thead className="bg-gray-50 border-b border-gray-200 text-gray-700 uppercase font-medium">
+              <tr>
+                <th className="px-6 py-4">User Details</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Joined</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {users.map((user) => (
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-50 transition-colors group"
+                >
+                  <td className="px-6 py-4">
+                    <p className="font-medium text-gray-900">{user.name}</p>
+                    <p className="text-gray-500 text-xs mt-0.5">{user.email}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      {user.role === "Creator" && (
+                        <Users className="w-4 h-4 text-blue-500" />
+                      )}
+                      {user.role === "Brand" && (
+                        <Building className="w-4 h-4 text-purple-500" />
+                      )}
+                      {user.role === "Admin" && (
+                        <Shield className="w-4 h-4 text-gray-700" />
+                      )}
+                      <span>{user.role}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                        user.status === "Active"
+                          ? "bg-green-100 text-green-700"
+                          : user.status === "Pending KYC"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">{user.joinDate}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                        title="Edit User"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                        title="Delete/Suspend"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"
+                        title="More Options"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Pagination Placeholder */}
       <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
