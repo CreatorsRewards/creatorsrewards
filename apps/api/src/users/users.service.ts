@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateWaitlistEntryDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -28,5 +28,24 @@ export class UsersService {
 
   remove(id: string) {
     return this.prisma.user.delete({ where: { id } });
+  }
+
+  //crud for wait list users
+  waitlistUpdate(id: string, updateWaitlistEntryDto: UpdateWaitlistEntryDto) {
+    return this.prisma.waitlist_entries.update({
+      where: { id },
+      data: updateWaitlistEntryDto,
+    });
+  }
+
+  waitlistFindAll() {
+    return this.prisma.waitlist_entries.findMany();
+  }
+
+  waitlistFindOne(id: string) {
+    return this.prisma.waitlist_entries.findUnique({ where: { id } });
+  }
+  waitlistRemove(id: string) {
+    return this.prisma.waitlist_entries.delete({ where: { id } });
   }
 }
