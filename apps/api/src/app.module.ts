@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from './users/users.module'; 
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
