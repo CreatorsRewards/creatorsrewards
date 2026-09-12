@@ -38,8 +38,10 @@ export class UsersService {
     });
   }
 
-  waitlistFindAll() {
-    return this.prisma.waitlist_entries.findMany();
+  async waitlistFindAll() {
+    const entries = await this.prisma.waitlist_entries.findMany();
+    // console.log(entries); // Debugging step
+    return entries;
   }
 
   waitlistFindOne(id: string) {
