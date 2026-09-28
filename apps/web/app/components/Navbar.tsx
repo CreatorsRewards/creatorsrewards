@@ -1,53 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-export default function Navbar({ activeSlide = 0 }: { activeSlide?: number }) {
+interface NavbarProps {
+  activeSlide?: number;
+}
+
+export default function Navbar({ activeSlide = 0 }: NavbarProps) {
   const isPinkBg = activeSlide === 1 || activeSlide === 2;
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push("/sign-in");
-  };
 
   return (
     <nav
-      className={`navbar-container ${isPinkBg ? "pink-bg" : ""}`}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 150,
-        padding: "0 32px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "transparent",
-        transition: "all 0.3s ease",
-      }}
+      className={`fixed top-0 left-0 right-0 z-50 flex h-20 items-center justify-between px-8 transition-colors duration-300 ${
+        isPinkBg ? "bg-cr-pink" : "bg-transparent"
+      }`}
     >
-      <Link
-        href="/"
-        style={{ display: "flex", alignItems: "center", gap: "12px" }}
-      >
-        <span className="stylized-name">CreatorsRewards</span>
+      {/* Brand Logo / Title */}
+      <Link href="/" className="flex items-center gap-3">
+        <span
+          className={`font-display text-xl font-bold tracking-tight transition-colors duration-300 ${
+            isPinkBg ? "text-white" : "text-cr-dark"
+          }`}
+        >
+          CreatorsRewards
+        </span>
       </Link>
 
+      {/* Action Button */}
       <Link
         href="/sign-in"
-        className="btn-ghost nav-btn"
-        style={{
-          padding: "10px 24px",
-          fontSize: "14px",
-          borderRadius: "100px",
-          borderColor: isPinkBg ? "#fff" : "var(--cr-pink)",
-          color: isPinkBg ? "#fff" : "var(--cr-pink)",
-          borderWidth: "2px",
-        }}
-        onClick={handleClick}
+        className={`inline-flex items-center justify-center rounded-full border-2 px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 ${
+          isPinkBg
+            ? "border-white text-white hover:bg-white/10"
+            : "border-cr-pink text-cr-pink hover:bg-cr-pink/10"
+        }`}
       >
         Sign In
       </Link>
