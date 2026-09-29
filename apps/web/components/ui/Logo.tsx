@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl";
   variant?: "full" | "mark" | "inverted";
   className?: string;
   imgFallback?: boolean;
+  href?: string;
 }
 
 // Exact vector path for the official Cooper Black "Cr" glyphs matching the brand logo
@@ -19,6 +21,7 @@ export const Logo: React.FC<LogoProps> = ({
   variant = "full",
   className = "",
   imgFallback = true,
+  href,
 }) => {
   const [imgError, setImgError] = useState(false);
 
@@ -38,19 +41,18 @@ export const Logo: React.FC<LogoProps> = ({
 
   const isDarkBg = variant === "inverted";
 
-  return (
+  const content = (
     <div
-      className={`inline-flex items-center gap-2.5 font-bold tracking-tight select-none ${className}`}
-      id={`cr-logo-${size}`}
+      className={`group inline-flex items-center gap-2.5 font-bold tracking-tight select-none ${className}`}
     >
-      {/* Official "Cr" Logo Mark on Black Background */}
+      {/* Official "Cr" Logo Mark */}
       <div
         className={`${markDimensions} relative bg-[#000000] flex items-center justify-center p-1 shadow-md shadow-black/15 border border-black/10 overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-200`}
         title="CreatorsRewards Logo"
       >
         {imgFallback && !imgError ? (
           <Image
-            src="/images/cr logo.jpg"
+            src="/images/cr-logo.jpg"
             alt="CreatorsRewards"
             fill
             sizes="(max-width: 768px) 36px, 56px"
@@ -83,6 +85,19 @@ export const Logo: React.FC<LogoProps> = ({
       )}
     </div>
   );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-lg"
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 };
 
 export default Logo;
