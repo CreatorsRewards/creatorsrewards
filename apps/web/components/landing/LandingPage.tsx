@@ -3,7 +3,8 @@
 import DynamicScrollBackground from "@/components/background/DynamicScrollBackground";
 import InteractiveGridBackground from "@/components/background/InteractiveGridBackground";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
-import { Hero } from "./sections/Hero";
+import Hero from "./sections/Hero";
+// import { Hero } from "./sections/Hero";
 
 export default function LandingPage() {
   const { startCampaign, joinCreator /*, authModalOpen, ... */ } =
