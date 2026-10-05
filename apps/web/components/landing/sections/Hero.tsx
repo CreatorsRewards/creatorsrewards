@@ -9,12 +9,6 @@ import {
   SpotlightCard,
   TextRotator,
 } from "../../animation/AnimatedComponents";
-// import {
-//   AnimatedCounter,
-//   TextRotator,
-//   SpotlightCard,
-//   ClipPathReveal,
-// } from "./AnimatedComponents";
 
 export interface HeroProps {
   onStartCampaign: (details?: {
