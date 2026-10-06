@@ -19,3 +19,17 @@ export interface CreatorLane {
   payoutTag: string;
   perk: string;
 }
+
+/** One card in the "For brands" section. Icon and color are decided by the UI, keyed on `id`. */
+export interface BrandCategory {
+  id: string;
+  title: string;
+  subtitle: string;
+}
+
+/** Everything the landing page needs from the backend, in one object. */
+export interface LandingContent {
+  stats: PlatformStats;
+  creatorLanes: CreatorLane[];
+  brandCategories: BrandCategory[];
+}

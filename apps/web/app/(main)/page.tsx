@@ -1,7 +1,6 @@
 import LandingPage from "@/components/landing/LandingPage";
-import { CREATOR_LANES } from "@/lib/api/creator-lanes";
-import { PLATFORM_STATS } from "@/lib/api/stats";
+import { LANDING_CONTENT } from "@/lib/api/landing";
 
 export default function Page() {
-  return <LandingPage stats={PLATFORM_STATS} creatorLanes={CREATOR_LANES} />;
+  return <LandingPage content={LANDING_CONTENT} />;
 }
