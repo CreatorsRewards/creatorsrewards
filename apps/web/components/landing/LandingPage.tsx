@@ -3,11 +3,18 @@
 import DynamicScrollBackground from "@/components/background/DynamicScrollBackground";
 import InteractiveGridBackground from "@/components/background/InteractiveGridBackground";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
-import type { PlatformStats } from "@/lib/api/types";
+import type { CreatorLane, PlatformStats } from "@/lib/api/types";
 import Hero from "./sections/Hero";
 import StatsTicker from "./sections/StatsTicker";
+import CreatorSection from "./sections/CreatorSection";
 
-export default function LandingPage({ stats }: { stats: PlatformStats }) {
+export default function LandingPage({
+  stats,
+  creatorLanes,
+}: {
+  stats: PlatformStats;
+  creatorLanes: CreatorLane[];
+}) {
   const { startCampaign, joinCreator } = useAuthFlow();
 
   return (
@@ -18,7 +25,7 @@ export default function LandingPage({ stats }: { stats: PlatformStats }) {
       <main className="grow shrink-0 relative z-10">
         <Hero onStartCampaign={startCampaign} onJoinCreator={joinCreator} />
         <StatsTicker stats={stats} />
-        {/* <CreatorSection onJoinCreator={joinCreator} /> */}
+        <CreatorSection lanes={creatorLanes} onJoinCreator={joinCreator} />
         {/* <BrandSection onStartCampaign={startCampaign} /> */}
       </main>
 

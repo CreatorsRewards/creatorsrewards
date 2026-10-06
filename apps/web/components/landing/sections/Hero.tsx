@@ -13,7 +13,7 @@ import {
   TextRotator,
 } from "@/components/animation/AnimatedComponents";
 import type { CampaignData } from "@/hooks/useAuthFlow";
-import HeroDashboard from "./Herodashboard";
+import HeroDashboard from "./HeroDashboard";
 
 export interface HeroProps {
   onStartCampaign: (details?: CampaignData) => void;

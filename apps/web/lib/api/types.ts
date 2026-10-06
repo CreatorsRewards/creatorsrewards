@@ -8,3 +8,14 @@
 export interface PlatformStats {
   creatorCount: number;
 }
+
+/** One card in the "For creators" section. Icon and color are decided by the UI, keyed on `id`. */
+export interface CreatorLane {
+  id: string;
+  title: string;
+  ctaText: string;
+  description: string;
+  /** Display-ready payout text, e.g. "₦35,000 – ₦180,000 / video". */
+  payoutTag: string;
+  perk: string;
+}
