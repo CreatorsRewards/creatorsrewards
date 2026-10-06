@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
 
 export interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl";
   variant?: "full" | "mark" | "inverted";
   className?: string;
-  imgFallback?: boolean;
   href?: string;
 }
 
@@ -20,11 +18,8 @@ export const Logo: React.FC<LogoProps> = ({
   size = "md",
   variant = "full",
   className = "",
-  imgFallback = true,
   href,
 }) => {
-  const [imgError, setImgError] = useState(false);
-
   const markDimensions = {
     sm: "w-7 h-7 rounded-lg",
     md: "w-9 h-9 rounded-xl",
@@ -50,27 +45,15 @@ export const Logo: React.FC<LogoProps> = ({
         className={`${markDimensions} relative bg-[#000000] flex items-center justify-center p-1 shadow-md shadow-black/15 border border-black/10 overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-200`}
         title="CreatorsRewards Logo"
       >
-        {imgFallback && !imgError ? (
-          <Image
-            src="/images/cr-logo.jpg"
-            alt="CreatorsRewards"
-            fill
-            sizes="(max-width: 768px) 36px, 56px"
-            className="object-contain p-0.5"
-            onError={() => setImgError(true)}
-            priority
-          />
-        ) : (
-          <svg
-            viewBox="0 0 500 500"
-            className="w-full h-full"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path d={CR_GLYPH_PATH} fill="#FB7185" />
-          </svg>
-        )}
+        <svg
+          viewBox="0 0 500 500"
+          className="w-full h-full"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path d={CR_GLYPH_PATH} fill="#FB7185" />
+        </svg>
       </div>
 
       {variant !== "mark" && (

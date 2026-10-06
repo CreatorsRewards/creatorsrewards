@@ -1,12 +1,6 @@
 import LandingPage from "@/components/landing/LandingPage";
-import React from "react";
+import { PLATFORM_STATS } from "@/lib/api/stats";
 
-const page = () => {
-  return (
-    <>
-      <LandingPage />
-    </>
-  );
-};
-
-export default page;
+export default function Page() {
+  return <LandingPage stats={PLATFORM_STATS} />;
+}
