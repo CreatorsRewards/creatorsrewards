@@ -7,6 +7,7 @@ import type { LandingContent } from "@/lib/api/types";
 import BrandSection from "./sections/BrandSection";
 import CreatorSection from "./sections/CreatorSection";
 import Hero from "./sections/Hero";
+import HowItWorksSection from "./sections/HowItWorksSection";
 import StatsTicker from "./sections/StatsTicker";
 
 export default function LandingPage({ content }: { content: LandingContent }) {
@@ -27,6 +28,11 @@ export default function LandingPage({ content }: { content: LandingContent }) {
         <BrandSection
           categories={content.brandCategories}
           onStartCampaign={startCampaign}
+        />
+        <HowItWorksSection
+          content={content.howItWorks}
+          onStartCampaign={startCampaign}
+          onJoinCreator={joinCreator}
         />
       </main>
 

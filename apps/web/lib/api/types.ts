@@ -27,9 +27,23 @@ export interface BrandCategory {
   subtitle: string;
 }
 
+/** One step in a "How it works" column. The icon is decided by the UI, keyed on `id`. */
+export interface ProcessStep {
+  id: string;
+  title: string;
+  description: string;
+}
+
+/** Both columns of the "How it works" section. */
+export interface HowItWorksContent {
+  creatorSteps: ProcessStep[];
+  brandSteps: ProcessStep[];
+}
+
 /** Everything the landing page needs from the backend, in one object. */
 export interface LandingContent {
   stats: PlatformStats;
   creatorLanes: CreatorLane[];
   brandCategories: BrandCategory[];
+  howItWorks: HowItWorksContent;
 }

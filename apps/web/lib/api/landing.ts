@@ -1,5 +1,6 @@
 import { BRAND_CATEGORIES } from "./brand-categories";
 import { CREATOR_LANES } from "./creator-lanes";
+import { HOW_IT_WORKS } from "./how-it-works";
 import { PLATFORM_STATS } from "./stats";
 import type { LandingContent } from "./types";
 
@@ -9,4 +10,5 @@ export const LANDING_CONTENT: LandingContent = {
   stats: PLATFORM_STATS,
   creatorLanes: CREATOR_LANES,
   brandCategories: BRAND_CATEGORIES,
+  howItWorks: HOW_IT_WORKS,
 };
