@@ -8,7 +8,9 @@ import BrandSection from "./sections/BrandSection";
 import CreatorSection from "./sections/CreatorSection";
 import Hero from "./sections/Hero";
 import HowItWorksSection from "./sections/HowItWorksSection";
+import ParallaxShowcaseSection from "./sections/ParallaxShowcaseSection";
 import StatsTicker from "./sections/StatsTicker";
+import EarningsCalculator from "./sections/EarningsCalculator";
 
 export default function LandingPage({ content }: { content: LandingContent }) {
   const { startCampaign, joinCreator } = useAuthFlow();
@@ -31,6 +33,17 @@ export default function LandingPage({ content }: { content: LandingContent }) {
         />
         <HowItWorksSection
           content={content.howItWorks}
+          onStartCampaign={startCampaign}
+          onJoinCreator={joinCreator}
+        />
+        {/* <ParallaxShowcaseSection
+          content={content.showcase}
+          onStartCampaign={startCampaign}
+          onJoinCreator={joinCreator}
+        /> */}
+
+        <EarningsCalculator
+          content={content.calculator}
           onStartCampaign={startCampaign}
           onJoinCreator={joinCreator}
         />
