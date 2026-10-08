@@ -7,18 +7,12 @@ import { ViewportReveal } from "@/components/animation/AnimatedComponents";
 import DynamicShowcaseBackdrop from "@/components/background/DynamicShowcaseBackdrop";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ShowcaseContent } from "@/lib/api/types";
-import { getStageStyle } from "./parallaxShowcase/stage-styles";
-import { StageSlot } from "./parallaxShowcase/StageSlot";
-import { AnalyticsCard } from "./parallaxShowcase/AnalyticsCard";
-import { ReelCard } from "./parallaxShowcase/ReelCard";
-import { PayoutCard } from "./parallaxShowcase/PayoutCard";
-import { useShowcaseParallax } from "./parallaxShowcase/useShowcaseParallax";
-// import { AnalyticsCard } from "./showcase/AnalyticsCard";
-// import { PayoutCard } from "./showcase/PayoutCard";
-// import { ReelCard } from "./showcase/ReelCard";
-// import { getStageStyle } from "./showcase/stage-styles";
-// import { StageSlot } from "./showcase/StageSlot";
-// import { useShowcaseParallax } from "./showcase/useShowcaseParallax";
+import { getStageStyle } from "./showcase/stage-styles";
+import { StageSlot } from "./showcase/StageSlot";
+import { AnalyticsCard } from "./showcase/AnalyticsCard";
+import { ReelCard } from "./showcase/ReelCard";
+import { PayoutCard } from "./showcase/PayoutCard";
+import { useShowcaseParallax } from "./showcase/useShowcaseParallax";
 
 export interface ParallaxShowcaseSectionProps {
   /** Sample figures and copy. Static in lib/api for now. */

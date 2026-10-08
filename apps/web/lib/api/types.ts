@@ -119,6 +119,26 @@ export interface CalculatorContent {
   averagePaymentTime: string;
 }
 
+/** One pillar in the "Why CreatorsRewards" section. Icon and color are decided by the UI, keyed on `id`. */
+export interface WhyPillar {
+  id: string;
+  title: string;
+  description: string;
+  /** Short label shown on the card, e.g. "Two-gate verification". */
+  badge: string;
+}
+
+/** Defaults and rules for the "New Campaign" form. Money is whole naira (₦). */
+export interface CampaignPreviewContent {
+  defaultName: string;
+  /** Creator types a brand can choose between. */
+  creatorTypes: string[];
+  budgetPresets: number[];
+  defaultBudget: number;
+  /** Smallest budget the platform accepts. The backend must enforce the same rule. */
+  minBudget: number;
+}
+
 /** Everything the landing page needs from the backend, in one object. */
 export interface LandingContent {
   stats: PlatformStats;
@@ -127,4 +147,6 @@ export interface LandingContent {
   howItWorks: HowItWorksContent;
   showcase: ShowcaseContent;
   calculator: CalculatorContent;
+  whyUs: WhyPillar[];
+  // campaignPreview: CampaignPreviewContent;
 }
