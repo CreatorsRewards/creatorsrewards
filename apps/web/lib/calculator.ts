@@ -21,12 +21,8 @@ export function calculateBrandEstimate(lane: CalculatorLane, views: number) {
   return { budget, agencyCost, savingsPercent };
 }
 
-// Fixed locale so the server and the browser always print the same text.
-const NUMBER_FORMAT = new Intl.NumberFormat("en-US");
-
-export const formatNumber = (value: number) => NUMBER_FORMAT.format(value);
-
-export const formatNaira = (value: number) => `₦${formatNumber(value)}`;
+// Formatting lives in ./currency; re-exported so existing imports keep working.
+export { formatNaira, formatNumber } from "./currency";
 
 export const formatViews = (views: number) =>
   views >= 1_000_000

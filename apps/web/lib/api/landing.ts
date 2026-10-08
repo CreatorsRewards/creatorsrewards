@@ -1,6 +1,6 @@
 import { BRAND_CATEGORIES } from "./brand-categories";
 import { CALCULATOR_CONTENT } from "./calculator";
-// import { CAMPAIGN_PREVIEW_CONTENT } from "./campaign-preview";
+import { CAMPAIGN_PREVIEW_CONTENT } from "./campaign-preview";
 import { CREATOR_LANES } from "./creator-lanes";
 import { HOW_IT_WORKS } from "./how-it-works";
 import { SHOWCASE_CONTENT } from "./showcase";
@@ -18,5 +18,5 @@ export const LANDING_CONTENT: LandingContent = {
   showcase: SHOWCASE_CONTENT,
   calculator: CALCULATOR_CONTENT,
   whyUs: WHY_PILLARS,
-  //   campaignPreview: CAMPAIGN_PREVIEW_CONTENT,
+  campaignPreview: CAMPAIGN_PREVIEW_CONTENT,
 };

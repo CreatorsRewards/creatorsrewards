@@ -12,6 +12,7 @@ import ParallaxShowcaseSection from "./sections/ParallaxShowcaseSection";
 import StatsTicker from "./sections/StatsTicker";
 import EarningsCalculator from "./sections/EarningsCalculator";
 import WhyCreatorsRewards from "./sections/WhyCreatorsRewards";
+import CampaignPreviewSection from "./sections/CampaignPreviewSection";
 
 export default function LandingPage({ content }: { content: LandingContent }) {
   const { startCampaign, joinCreator } = useAuthFlow();
@@ -50,6 +51,11 @@ export default function LandingPage({ content }: { content: LandingContent }) {
         />
 
         <WhyCreatorsRewards pillars={content.whyUs} />
+
+        <CampaignPreviewSection
+          content={content.campaignPreview}
+          onStartCampaign={startCampaign}
+        />
       </main>
 
       {/* <AuthModal ... /> */}

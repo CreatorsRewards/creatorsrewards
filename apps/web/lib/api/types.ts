@@ -148,5 +148,5 @@ export interface LandingContent {
   showcase: ShowcaseContent;
   calculator: CalculatorContent;
   whyUs: WhyPillar[];
-  // campaignPreview: CampaignPreviewContent;
+  campaignPreview: CampaignPreviewContent;
 }
