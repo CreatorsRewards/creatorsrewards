@@ -12,6 +12,7 @@ import {
   Building,
   Users,
 } from "lucide-react";
+import WaitlistManagementPage from "../../components/WaitlistManagement";
 
 export default function UserManagementPage() {
   const [activeTab, setActiveTab] = useState("All");
@@ -182,6 +183,10 @@ export default function UserManagementPage() {
           </table>
         </div>
       )}
+      {activeTab.toLowerCase() === "waitlist" && (
+        <WaitlistManagementPage />
+      )}
+      
 
       {/* Pagination Placeholder */}
       <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
