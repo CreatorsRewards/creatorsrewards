@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { MoreVertical, X } from "lucide-react";
+import { Loader2, MoreVertical, X } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  API                                                                       */
@@ -21,7 +21,7 @@ export async function api<T = unknown>(
     ...init,
     headers: {
       "Content-Type": "application/json",
-      // TODO: attach admin auth token, e.g. Authorization: `Bearer ${token}`
+      // TODO: attach your admin auth token, e.g. Authorization: `Bearer ${token}`
       ...(init?.headers ?? {}),
     },
   });
@@ -53,7 +53,7 @@ const ACRONYMS: Record<string, string> = { ugc: "UGC", kyc: "KYC" };
 export const humanize = (value?: string | null) =>
   !value
     ? "—"
-    : value
+    : (value === value.toUpperCase() ? value.toLowerCase() : value)
         .replace(/_/g, " ")
         .split(" ")
         .map((w) => ACRONYMS[w.toLowerCase()] ?? w)
@@ -271,5 +271,144 @@ export function ActionMenu({
         </div>
       )}
     </>
+  );
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*  Roles & statuses (keep in sync with schema.prisma)                        */
+/* -------------------------------------------------------------------------- */
+
+export const USER_ROLES = [
+  "UGC_CREATOR",
+  "CLIPPER",
+  "BRAND",
+  "CUSTOMER_REP",
+  "ADMIN",
+  "SUPER_ADMIN",
+] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
+// Only PENDING_VERIFICATION is confirmed from your schema. Make ACTIVE and
+// SUSPENDED match the real AccountStatus enum values.
+export const ACCOUNT_STATUS = {
+  ACTIVE: "ACTIVE",
+  SUSPENDED: "SUSPENDED",
+} as const;
+
+/* -------------------------------------------------------------------------- */
+/*  Confirm dialog body                                                       */
+/* -------------------------------------------------------------------------- */
+
+export function ConfirmBody({
+  message,
+  confirmLabel,
+  tone,
+  busy,
+  onConfirm,
+  onCancel,
+}: {
+  message: React.ReactNode;
+  confirmLabel: string;
+  tone: "danger" | "primary";
+  busy: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <>
+      <div className="text-sm text-gray-600">{message}</div>
+      <div className="mt-6 flex justify-end gap-2">
+        <button
+          onClick={onCancel}
+          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          disabled={busy}
+          onClick={onConfirm}
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${
+            tone === "danger"
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+        >
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+          {confirmLabel}
+        </button>
+      </div>
+    </>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Pagination                                                                */
+/* -------------------------------------------------------------------------- */
+
+export const PAGE_SIZES = [10, 25, 50];
+
+export function Pagination({
+  page,
+  pageSize,
+  total,
+  noun,
+  onPage,
+  onPageSize,
+}: {
+  page: number;
+  pageSize: number;
+  total: number;
+  noun: string;
+  onPage: (p: number) => void;
+  onPageSize: (s: number) => void;
+}) {
+  if (total === 0) return null;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const current = Math.min(page, totalPages);
+  const start = (current - 1) * pageSize;
+
+  return (
+    <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-gray-500 sm:flex-row">
+      <p>
+        Showing {start + 1} to {Math.min(start + pageSize, total)} of {total}{" "}
+        {noun}
+      </p>
+      <div className="flex items-center gap-3">
+        <label className="flex items-center gap-2">
+          Rows
+          <select
+            value={pageSize}
+            onChange={(e) => onPageSize(Number(e.target.value))}
+            className="rounded border border-gray-200 bg-white px-2 py-1 text-sm"
+          >
+            {PAGE_SIZES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+        <span>
+          Page {current} of {totalPages}
+        </span>
+        <div className="flex gap-2">
+          <button
+            disabled={current === 1}
+            onClick={() => onPage(current - 1)}
+            className="rounded border border-gray-200 px-3 py-1 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            disabled={current === totalPages}
+            onClick={() => onPage(current + 1)}
+            className="rounded border border-gray-200 px-3 py-1 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
