@@ -348,9 +348,11 @@ function ConfirmBody({
 export default function WaitlistTab({
   search,
   refreshKey = 0,
+  onLoadingChange,
 }: {
   search: string;
   refreshKey?: number;
+  onLoadingChange?: (loading: boolean) => void;
 }) {
   const [entries, setEntries] = useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -396,6 +398,10 @@ export default function WaitlistTab({
   useEffect(() => {
     load();
   }, [load, refreshKey]);
+
+  useEffect(() => {
+    onLoadingChange?.(loading);
+  }, [loading, onLoadingChange]);
 
   /* --------------------------------- actions ------------------------------- */
 
