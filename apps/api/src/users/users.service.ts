@@ -121,28 +121,26 @@ export class UsersService {
   }
 
   async updateRole(id: string, role: UserRole) {
-    return this.prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id },
-        select: { role: true },
-      });
-      if (!user) throw new NotFoundException(`User ${id} not found`);
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { role: true },
+    });
+    if (!user) throw new NotFoundException(`User ${id} not found`);
 
-      // Never leave the platform without a super admin
-      if (user.role === UserRole.SUPER_ADMIN && role !== UserRole.SUPER_ADMIN) {
-        const admins = await tx.user.count({
-          where: { role: UserRole.SUPER_ADMIN },
-        });
-        if (admins <= 1) {
-          throw new BadRequestException('Cannot demote the last super admin');
-        }
+    // Never leave the platform without a super admin
+    if (user.role === UserRole.SUPER_ADMIN && role !== UserRole.SUPER_ADMIN) {
+      const superAdmins = await this.prisma.user.count({
+        where: { role: UserRole.SUPER_ADMIN },
+      });
+      if (superAdmins <= 1) {
+        throw new BadRequestException('Cannot demote the last super admin');
       }
+    }
 
-      return tx.user.update({
-        where: { id },
-        data: { role },
-        omit: this.SAFE_USER,
-      });
+    return this.prisma.user.update({
+      where: { id },
+      data: { role },
+      omit: this.SAFE_USER,
     });
   }
 }
