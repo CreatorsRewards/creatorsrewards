@@ -125,6 +125,7 @@ model User {
   passwordHash               String?
   fullName                   String?
   country                    String?
+  phone                      String?
   role                       UserRole      @default(UGC_CREATOR)
   accountStatus              AccountStatus @default(PENDING_VERIFICATION)
   failedVerificationAttempts Int           @default(0) // Locks after 2 fails

@@ -31,6 +31,10 @@ export class UsersController {
     return this.usersService.waitlistFindAll();
   }
 
+  @Post('waitlist/:id/convert')
+  waitlistConvert(@Param('id') id: string) {
+    return this.usersService.waitlistConvert(id);
+  }
   @Patch('waitlist/:id')
   waitlistUpdate(
     @Param('id') id: string,
