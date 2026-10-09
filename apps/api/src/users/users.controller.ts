@@ -10,6 +10,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateWaitlistEntryDto } from './dto/update-user.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 
 @Controller('users')
 export class UsersController {
@@ -31,6 +32,10 @@ export class UsersController {
     return this.usersService.waitlistFindAll();
   }
 
+  @Post('waitlist/:id/convert')
+  waitlistConvert(@Param('id') id: string) {
+    return this.usersService.waitlistConvert(id);
+  }
   @Patch('waitlist/:id')
   waitlistUpdate(
     @Param('id') id: string,
@@ -47,6 +52,11 @@ export class UsersController {
   @Delete('waitlist/:id')
   waitlistRemove(@Param('id') id: string) {
     return this.usersService.waitlistRemove(id);
+  }
+
+  @Patch(':id/role')
+  updateRole(@Param('id') id: string, @Body() dto: UpdateUserRoleDto) {
+    return this.usersService.updateRole(id, dto.role);
   }
 
   // Dynamic :id routes
