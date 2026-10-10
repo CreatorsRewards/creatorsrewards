@@ -127,6 +127,9 @@ model User {
   country                    String?
   phone                      String?
   role                       UserRole      @default(UGC_CREATOR)
+  mustChangePassword         Boolean @default(false)
+  credentialsSentAt   DateTime? // null = converted but login details never sent
+  credentialsExpiresAt DateTime? // temp password stops working after this
   accountStatus              AccountStatus @default(PENDING_VERIFICATION)
   failedVerificationAttempts Int           @default(0) // Locks after 2 fails
 
