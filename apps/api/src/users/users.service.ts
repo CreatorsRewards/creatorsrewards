@@ -1,17 +1,27 @@
+import * as bcrypt from 'bcrypt';
 import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateWaitlistEntryDto } from './dto/update-user.dto';
 import { Prisma, UserRole } from 'src/generated/prisma/client';
+import { generateTempPassword } from 'src/common/generateTempPassword';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(UsersService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private mail: MailService,
+  ) {}
   SAFE_USER = { passwordHash: true } as const; // never return this
 
   create(createUserDto: CreateUserDto) {
@@ -101,7 +111,9 @@ export class UsersService {
             phone: entry.phone,
             country: entry.location_country,
             role: 'UGC_CREATOR',
+            mustChangePassword: true, // no passwordHash yet
           },
+          omit: { passwordHash: true },
         });
 
         await tx.waitlist_entries.delete({ where: { id } });
@@ -118,6 +130,54 @@ export class UsersService {
       }
       throw err;
     }
+  }
+
+  async sendCredentials(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { email: true, fullName: true, mustChangePassword: true },
+    });
+    if (!user?.email) throw new NotFoundException(`User ${id} not found`);
+    if (!user.mustChangePassword) {
+      throw new BadRequestException(
+        'This user has already set their own password',
+      );
+    }
+
+    const tempPassword = generateTempPassword();
+    const passwordHash = await bcrypt.hash(tempPassword, 12);
+
+    // Save the hash first, so the emailed password always matches what's stored
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash,
+        credentialsExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    try {
+      await this.mail.sendWelcomeCredentials({
+        to: user.email,
+        name: user.fullName,
+        tempPassword,
+      });
+    } catch (err) {
+      this.logger.error(
+        `Credentials email to ${user.email} failed: ${(err as Error).message}`,
+      );
+      // credentialsSentAt stays null, so the admin sees it was never sent and can retry
+      throw new ServiceUnavailableException(
+        'The email could not be sent. Try again.',
+      );
+    }
+
+    // The temp password exists only in this function and the email. Never log or return it.
+    return this.prisma.user.update({
+      where: { id },
+      data: { credentialsSentAt: new Date() },
+      select: { id: true, credentialsSentAt: true },
+    });
   }
 
   async updateRole(id: string, role: UserRole) {
