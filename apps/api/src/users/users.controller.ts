@@ -59,6 +59,11 @@ export class UsersController {
     return this.usersService.updateRole(id, dto.role);
   }
 
+  @Post(':id/send-credentials')
+  sendCredentials(@Param('id') id: string) {
+    return this.usersService.sendCredentials(id);
+  }
+
   // Dynamic :id routes
   @Get(':id')
   findOne(@Param('id') id: string) {
