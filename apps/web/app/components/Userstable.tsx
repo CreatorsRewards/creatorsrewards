@@ -8,6 +8,7 @@ import {
   Edit2,
   Eye,
   Loader2,
+  Mail,
   Shield,
   Trash2,
   UserCog,
@@ -47,12 +48,15 @@ export interface User {
   usdtBalance: number;
   createdAt: string;
   updatedAt: string;
+  credentialsSentAt: string | null;
+  mustChangePassword: boolean;
 }
 
 type ModalState =
   | { type: "view"; user: User }
   | { type: "edit"; user: User }
   | { type: "role"; user: User }
+  | { type: "credentials"; user: User }
   | { type: "delete"; user: User }
   | null;
 
@@ -119,7 +123,10 @@ function UserDetails({ user }: { user: User }) {
         <Detail label="Phone" value={user.phone} />
         <Detail label="Country" value={user.country} />
         <Detail label="Naira balance" value={naira(user.nairaBalance)} />
-        <Detail label="USDT balance" value={user.usdtBalance.toLocaleString()} />
+        <Detail
+          label="USDT balance"
+          value={user.usdtBalance.toLocaleString()}
+        />
         <Detail
           label="Failed verification attempts"
           value={String(user.failedVerificationAttempts)}
@@ -153,15 +160,18 @@ function EditForm({
     phone: user.phone ?? "",
     country: user.country ?? "",
   });
-  const set =
-    (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) =>
-      setV((prev) => ({ ...prev, [k]: e.target.value }));
+  const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setV((prev) => ({ ...prev, [k]: e.target.value }));
 
   return (
     <div className="space-y-4">
       <label className="block text-sm font-medium text-gray-700">
         Full name
-        <input className={INPUT} value={v.fullName} onChange={set("fullName")} />
+        <input
+          className={INPUT}
+          value={v.fullName}
+          onChange={set("fullName")}
+        />
       </label>
       <label className="block text-sm font-medium text-gray-700">
         Email
@@ -179,7 +189,11 @@ function EditForm({
         </label>
         <label className="block text-sm font-medium text-gray-700">
           Country
-          <input className={INPUT} value={v.country} onChange={set("country")} />
+          <input
+            className={INPUT}
+            value={v.country}
+            onChange={set("country")}
+          />
         </label>
       </div>
       <div className="flex justify-end gap-2 pt-2">
@@ -332,7 +346,9 @@ export default function UsersTable({
     try {
       await action();
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : "Something went wrong");
+      setModalError(
+        err instanceof Error ? err.message : "Something went wrong",
+      );
     } finally {
       setBusy(false);
     }
@@ -380,7 +396,9 @@ export default function UsersTable({
         method: "PATCH",
         body: JSON.stringify({ accountStatus }),
       });
-      notify(`${user.fullName || user.email} is now ${humanize(accountStatus)}`);
+      notify(
+        `${user.fullName || user.email} is now ${humanize(accountStatus)}`,
+      );
     } catch (err) {
       patchLocal(user.id, { accountStatus: previous });
       notify(
@@ -415,6 +433,14 @@ export default function UsersTable({
         label: "Change role",
         icon: <UserCog className="h-4 w-4 text-gray-400" />,
         onClick: () => setModal({ type: "role", user }),
+      },
+      {
+        label: user.credentialsSentAt
+          ? "Resend credentials"
+          : "Send credentials",
+        icon: <Mail className="h-4 w-4 text-gray-400" />,
+        hidden: !user.mustChangePassword,
+        onClick: () => setModal({ type: "credentials", user }),
       },
       suspended
         ? {
@@ -500,7 +526,10 @@ export default function UsersTable({
             </thead>
             <tbody className="divide-y divide-gray-100">
               {rows.map((user) => (
-                <tr key={user.id} className="transition-colors hover:bg-gray-50">
+                <tr
+                  key={user.id}
+                  className="transition-colors hover:bg-gray-50"
+                >
                   <td className="px-6 py-4">
                     <p className="font-medium text-gray-900">
                       {user.fullName || "Unnamed user"}
