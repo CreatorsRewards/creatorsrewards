@@ -531,10 +531,10 @@ export default function WaitlistTab({
 
   useEffect(() => setPage(1), [search, pageSize]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(filtered.length / (pageSize || 1)));
   const currentPage = Math.min(page, totalPages);
-  const start = (currentPage - 1) * pageSize;
-  const rows = filtered.slice(start, start + pageSize);
+  const start = (currentPage - 1) * (pageSize || 1);
+  const rows = filtered.slice(start, start + (pageSize || 1));
 
   /* ---------------------------------- view --------------------------------- */
 
@@ -641,7 +641,7 @@ export default function WaitlistTab({
       {!loading && !loadError && filtered.length > 0 && (
         <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-gray-500 sm:flex-row">
           <p>
-            Showing {start + 1} to {Math.min(start + pageSize, filtered.length)}{" "}
+            Showing {start + 1} to {Math.min(start + (pageSize || 10), filtered.length)}{" "}
             of {filtered.length} on the waitlist
           </p>
           <div className="flex items-center gap-3">

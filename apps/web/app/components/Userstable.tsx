@@ -480,11 +480,11 @@ export default function UsersTable({
 
   useEffect(() => setPage(1), [search, pageSize]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(filtered.length / (pageSize || 1)));
   const currentPage = Math.min(page, totalPages);
   const rows = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+    (currentPage - 1) * (pageSize || 1),
+    currentPage * (pageSize || 1),
   );
 
   /* ---------------------------------- view --------------------------------- */
@@ -570,7 +570,7 @@ export default function UsersTable({
       {!loading && !loadError && (
         <Pagination
           page={currentPage}
-          pageSize={pageSize}
+          pageSize={pageSize || 10}
           total={filtered.length}
           noun="users"
           onPage={setPage}
