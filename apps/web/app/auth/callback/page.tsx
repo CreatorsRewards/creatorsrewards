@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { UserRole } from "@repo/types";
 
-export default function AuthCallbackPage() {
-  const router = useRouter();
+function AuthCallbackContent() {
   const searchParams = useSearchParams();
+  const code = searchParams.get("code");
+  const router = useRouter();
 
   useEffect(() => {
+    if (!code) return;
+    // Handle your OAuth / Auth exchange logic here
     // 1. Grab the token from the URL (e.g., ?token=eyJh...)
     const token = searchParams.get("token");
 
@@ -51,13 +54,25 @@ export default function AuthCallbackPage() {
       // Handle missing token scenario
       router.push("/login?error=auth_failed");
     }
-  }, [router, searchParams]);
+  }, [code, router, searchParams]);
 
   return (
-    <div
-      style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}
-    >
-      <p>Logging you in and setting up your workspace...</p>
+    <div className="flex min-h-screen items-center justify-center">
+      <p>Completing authentication, please wait...</p>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <p>Loading auth callback...</p>
+        </div>
+      }
+    >
+      <AuthCallbackContent />
+    </Suspense>
   );
 }
