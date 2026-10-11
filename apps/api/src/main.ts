@@ -7,8 +7,9 @@ async function bootstrap() {
 
   // Retrieve ConfigService from the app instance
   const configService = app.get(ConfigService);
-  const frontendUrl =
-    configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+  const frontendUrl = configService.get<string>('FRONTEND_URL');
+
+  console.log(`Using FRONTEND_URL: ${frontendUrl}`); // Log the frontend URL for debugging
 
   // Enable CORS
   app.enableCors({
