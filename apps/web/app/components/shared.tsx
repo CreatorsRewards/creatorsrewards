@@ -13,6 +13,8 @@ export const API_URL = `${
   process.env.NEXT_PUBLIC_NEST_API_URL ?? "http://localhost:4000"
 }/api`;
 
+console.log("API_URL:", process.env.NEXT_PUBLIC_NEST_API_URL, process.env.NEST_API_URL); // Debugging: Ensure the correct API URL is being used
+
 export async function api<T = unknown>(
   path: string,
   init?: RequestInit,
