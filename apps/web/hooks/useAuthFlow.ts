@@ -1,49 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 export type AuthType = "login" | "join" | "creator" | "brand";
+
+/** Details carried from a section into the auth modal. Empty strings mean "not chosen". */
 export interface CampaignData {
   name: string;
   type: string;
   budget: string;
 }
 
-export function useAuthFlow() {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalType, setAuthModalType] = useState<AuthType>("join");
-  const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
+export interface AuthFlowState {
+  open: boolean;
+  type: AuthType;
+  campaignData: CampaignData | null;
+}
 
-  const openAuth = (type: AuthType = "join") => {
-    setAuthModalType(type);
-    setAuthModalOpen(true);
-  };
+/**
+ * Everything a component needs to open the modal. These functions never change
+ * identity, so components that only call them don't re-render when it opens.
+ */
+export interface AuthActions {
+  openAuth: (type?: AuthType) => void;
+  closeAuth: () => void;
+  startCampaign: (details?: CampaignData | string) => void;
+  joinCreator: (lane?: string) => void;
+}
 
-  const startCampaign = (details?: CampaignData | string) => {
-    if (typeof details === "object" && details !== null) {
-      setCampaignData(details);
-    } else {
-      setCampaignData({
-        name: details ? `${details} Campaign` : "Summer Product Launch",
-        type: "UGC Creator",
-        budget: "₦500,000",
-      });
-    }
-    openAuth("brand");
-  };
+export const AuthActionsContext = createContext<AuthActions | null>(null);
 
-  const joinCreator = (lane?: string) => {
-    if (lane) setCampaignData({ name: "", type: lane, budget: "" });
-    openAuth("creator");
-  };
+/** State and actions behind <AuthProvider>. Use `useAuthFlow` in components instead. */
+export function useAuthFlowState() {
+  const [state, setState] = useState<AuthFlowState>({
+    open: false,
+    type: "join",
+    campaignData: null,
+  });
 
-  return {
-    authModalOpen,
-    authModalType,
-    campaignData,
-    closeAuth: () => setAuthModalOpen(false),
-    openAuth,
-    startCampaign,
-    joinCreator,
-  };
+  const actions = useMemo<AuthActions>(() => {
+    const open = (type: AuthType, campaignData: CampaignData | null) =>
+      setState({ open: true, type, campaignData });
+
+    return {
+      openAuth: (type = "join") =>
+        setState((prev) => ({ ...prev, open: true, type })),
+      closeAuth: () => setState((prev) => ({ ...prev, open: false })),
+      startCampaign: (details) => {
+        if (typeof details === "object") {
+          open("brand", details);
+        } else if (typeof details === "string") {
+          // A category card: we know the topic, not the type or budget.
+          open("brand", { name: `${details} Campaign`, type: "", budget: "" });
+        } else {
+          open("brand", null);
+        }
+      },
+      joinCreator: (lane) =>
+        open("creator", lane ? { name: "", type: lane, budget: "" } : null),
+    };
+  }, []);
+
+  return { state, actions };
+}
+
+/** Open the shared auth modal from any client component under <AuthProvider>. */
+export function useAuthFlow(): AuthActions {
+  const actions = useContext(AuthActionsContext);
+  if (!actions) {
+    throw new Error("useAuthFlow must be used inside <AuthProvider>.");
+  }
+  return actions;
 }

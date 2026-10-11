@@ -7,6 +7,8 @@ export interface ChoiceOptionProps {
   onChange: () => void;
   /** Classes for the visible surface, including its checked/unchecked look. */
   surfaceClassName: string;
+  /** Extra classes for the outer label, e.g. "flex-1" inside a flex row. */
+  className?: string;
   children: ReactNode;
 }
 
@@ -17,10 +19,11 @@ export function ChoiceOption({
   checked,
   onChange,
   surfaceClassName,
+  className = "",
   children,
 }: ChoiceOptionProps) {
   return (
-    <label className="block cursor-pointer">
+    <label className={`block cursor-pointer ${className}`}>
       <input
         type="radio"
         name={name}

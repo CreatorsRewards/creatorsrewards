@@ -5,14 +5,14 @@ import InteractiveGridBackground from "@/components/background/InteractiveGridBa
 import { useAuthFlow } from "@/hooks/useAuthFlow";
 import type { LandingContent } from "@/lib/api/types";
 import BrandSection from "./sections/BrandSection";
+import CampaignPreviewSection from "./sections/CampaignPreviewSection";
 import CreatorSection from "./sections/CreatorSection";
+import EarningsCalculator from "./sections/EarningsCalculator";
 import Hero from "./sections/Hero";
 import HowItWorksSection from "./sections/HowItWorksSection";
 import ParallaxShowcaseSection from "./sections/ParallaxShowcaseSection";
 import StatsTicker from "./sections/StatsTicker";
-import EarningsCalculator from "./sections/EarningsCalculator";
 import WhyCreatorsRewards from "./sections/WhyCreatorsRewards";
-import CampaignPreviewSection from "./sections/CampaignPreviewSection";
 
 export default function LandingPage({ content }: { content: LandingContent }) {
   const { startCampaign, joinCreator } = useAuthFlow();
@@ -43,22 +43,17 @@ export default function LandingPage({ content }: { content: LandingContent }) {
           onStartCampaign={startCampaign}
           onJoinCreator={joinCreator}
         />
-
         <EarningsCalculator
           content={content.calculator}
           onStartCampaign={startCampaign}
           onJoinCreator={joinCreator}
         />
-
         <WhyCreatorsRewards pillars={content.whyUs} />
-
         <CampaignPreviewSection
           content={content.campaignPreview}
           onStartCampaign={startCampaign}
         />
       </main>
-
-      {/* <AuthModal ... /> */}
     </div>
   );
 }
