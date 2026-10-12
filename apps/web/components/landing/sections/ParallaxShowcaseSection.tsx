@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Layers, Zap } from "lucide-react";
 import { ViewportReveal } from "@/components/animation/AnimatedComponents";
+import { Button } from "@/components/ui/Button";
 import DynamicShowcaseBackdrop from "@/components/background/DynamicShowcaseBackdrop";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ShowcaseContent } from "@/lib/api/types";
@@ -244,22 +245,23 @@ export default function ParallaxShowcaseSection({
                 </div>
               </div>
 
-              <button
-                type="button"
+              <Button
                 onClick={() =>
                   activeStyle.cta === "campaign"
                     ? onStartCampaign()
                     : onJoinCreator()
                 }
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white bg-cr-pink hover:bg-cr-coral-hover shadow-md transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                variant="primary"
+                size="md"
+                className="w-full sm:w-auto"
+                iconRight={<ArrowUpRight className="w-4 h-4" />}
               >
                 <span>
                   {activeStyle.cta === "campaign"
                     ? "Start a Campaign"
                     : "Join as Creator"}
                 </span>
-                <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-              </button>
+              </Button>
             </motion.div>
           </AnimatePresence>
         </div>

@@ -11,9 +11,7 @@ export default function SignInPage() {
   return (
     <div className="mx-auto w-full max-w-md px-4 py-16">
       <h1 className="font-display text-3xl font-bold">Sign in</h1>
-      <p className="mt-3 text-cr-dark/75">
-        The sign-in form goes here. Design coming.
-      </p>
+      <p className="mt-3 text-cr-dark/75">The sign-in form is coming.</p>
       <p className="mt-6 text-sm">
         New to CreatorsRewards?{" "}
         <Link

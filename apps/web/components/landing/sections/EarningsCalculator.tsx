@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import { ArrowRight, Calculator, Sparkles, Zap } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import {
   SpotlightCard,
   ViewportReveal,
@@ -326,13 +327,12 @@ export default function EarningsCalculator({
                 )}
               </dl>
 
-              <button
+              <Button
                 id={
                   isCreator
                     ? "calc-join-creator-btn"
                     : "calc-start-campaign-btn"
                 }
-                type="button"
                 onClick={() =>
                   isCreator
                     ? onJoinCreator(lane.name)
@@ -342,23 +342,24 @@ export default function EarningsCalculator({
                         budget: formatNaira(brand.budget),
                       })
                 }
-                className="w-full inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-cr-pink hover:bg-cr-coral-hover shadow-lg shadow-cr-pink/25 motion-safe:hover:scale-[1.02] transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                variant="primary"
+                size="md"
+                fullWidth
+                iconLeft={
+                  isCreator ? (
+                    <Sparkles className="w-4 h-4" />
+                  ) : (
+                    <Zap className="w-4 h-4" />
+                  )
+                }
+                iconRight={<ArrowRight className="w-4 h-4" />}
               >
-                {isCreator ? (
-                  <Sparkles className="w-4 h-4 shrink-0" aria-hidden="true" />
-                ) : (
-                  <Zap className="w-4 h-4 shrink-0" aria-hidden="true" />
-                )}
                 <span className="truncate">
                   {isCreator
                     ? `Join & Claim This Lane (${lane.name})`
                     : "Fund Campaign with This Estimate"}
                 </span>
-                <ArrowRight
-                  className="w-4 h-4 ml-1 shrink-0"
-                  aria-hidden="true"
-                />
-              </button>
+              </Button>
             </SpotlightCard>
           </div>
         </div>

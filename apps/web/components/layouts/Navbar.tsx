@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { Button } from "@/components/ui/Button";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ROUTES } from "@/lib/routes";
 import MobileMenu from "./MobileMenu";
@@ -86,25 +87,24 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3 xl:gap-4">
-            <Link
+            <Button
               id="nav-login-button"
               href={ROUTES.signIn}
-              className="px-2.5 xl:px-3 py-2 text-xs xl:text-sm font-bold hover:text-cr-pink transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-cr-pink"
+              variant="ghost"
+              size="sm"
             >
               Log in
-            </Link>
+            </Button>
 
-            <Link
+            <Button
               id="nav-join-button"
               href={ROUTES.signUp}
-              className="group inline-flex items-center gap-1.5 px-4 xl:px-5 py-2 xl:py-2.5 text-xs xl:text-sm font-bold text-white bg-cr-pink hover:bg-cr-coral-hover rounded-full shadow-md shadow-cr-pink/20 motion-safe:hover:scale-105 transition-all duration-200 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+              size="sm"
+              rounded="full"
+              iconRight={<ArrowUpRight className="w-4 h-4" />}
             >
               <span>Join Now</span>
-              <ArrowUpRight
-                aria-hidden="true"
-                className="w-4 h-4 motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5 transition-transform"
-              />
-            </Link>
+            </Button>
           </div>
 
           <div className="flex lg:hidden items-center">

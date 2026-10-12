@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { CheckCircle2, Eye, Flame, Pause, Play, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import type { ShowcaseReel } from "@/lib/api/types";
 
 const BAR_HEIGHTS = [35, 75, 45, 95, 60, 85, 40, 100, 50, 70] as const;
@@ -156,16 +157,16 @@ export function ReelCard({
           <div className="text-xs font-bold">
             Bounty: <span className="text-cr-pink">{data.bounty}</span>
           </div>
-          <button
-            type="button"
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               onSubmitClip();
             }}
-            className="px-3 py-1.5 rounded-lg bg-cr-pink text-white text-xs font-bold hover:bg-cr-coral-hover transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+            variant="primary"
+            size="sm"
           >
             Submit Clip
-          </button>
+          </Button>
         </div>
       </div>
     </div>

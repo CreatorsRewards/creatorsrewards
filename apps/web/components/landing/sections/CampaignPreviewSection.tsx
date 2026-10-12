@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import {
   SpotlightCard,
   ViewportReveal,
@@ -129,18 +130,15 @@ export default function CampaignPreviewSection({
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              <button
+              <Button
                 id="closing-start-campaign-cta"
-                type="button"
                 onClick={submit}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-cr-pink hover:bg-cr-coral-hover shadow-lg shadow-cr-pink/25 motion-safe:hover:scale-105 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                variant="primary"
+                size="lg"
+                iconRight={<ArrowRight className="w-4 h-4" />}
               >
                 <span>Start a Campaign</span>
-                <ArrowRight
-                  className="w-4 h-4 motion-safe:group-hover:translate-x-1 transition-transform"
-                  aria-hidden="true"
-                />
-              </button>
+              </Button>
               <span className="text-xs text-cr-dark/70 font-semibold">
                 No subscription fees · Pay as you go
               </span>
@@ -283,14 +281,17 @@ export default function CampaignPreviewSection({
                   />
                 </fieldset>
 
-                <button
+                <Button
                   id="submit-create-campaign-button"
                   type="submit"
-                  className="w-full mt-4 py-4 rounded-xl text-base font-bold text-white bg-cr-pink hover:bg-cr-coral-hover shadow-lg shadow-cr-pink/20 motion-safe:hover:scale-[1.01] transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  className="mt-4"
+                  iconRight="→"
                 >
-                  <span>Create Campaign</span>
-                  <span aria-hidden="true">→</span>
-                </button>
+                  Create Campaign
+                </Button>
               </form>
             </SpotlightCard>
           </ViewportReveal>
