@@ -8,6 +8,7 @@ import {
   useTransform,
 } from "motion/react";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import {
   ClipPathReveal,
   TextRotator,
@@ -197,25 +198,25 @@ export default function Hero({ onStartCampaign, onJoinCreator }: HeroProps) {
               transition={{ duration: 0.5, delay: 0.62 }}
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto mb-4"
             >
-              <button
+              <Button
                 id="hero-start-campaign-cta"
-                type="button"
                 onClick={() => onStartCampaign()}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white bg-cr-pink hover:bg-cr-coral-hover shadow-lg shadow-cr-pink/25 motion-safe:hover:scale-105 motion-safe:active:scale-95 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                variant="primary"
+                size="lg"
+                iconRight={<ArrowRight className="w-4 h-4" />}
               >
-                <span>Start a Campaign</span>
-                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
-              </button>
+                Start a Campaign
+              </Button>
 
-              <button
+              <Button
                 id="hero-join-creator-cta"
-                type="button"
                 onClick={() => onJoinCreator()}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-cr-dark bg-cr-blush hover:bg-white border border-cr-dark/15 shadow-sm motion-safe:hover:scale-105 motion-safe:active:scale-95 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-dark"
+                variant="secondary"
+                size="lg"
+                iconLeft={<Sparkles className="w-4 h-4 text-cr-pink" />}
               >
-                <Sparkles className="w-4 h-4 text-cr-pink" />
-                <span>Join as a Creator</span>
-              </button>
+                Join as a Creator
+              </Button>
             </motion.div>
 
             <ClipPathReveal
