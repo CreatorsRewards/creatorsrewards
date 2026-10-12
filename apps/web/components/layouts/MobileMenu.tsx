@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, ChevronRight, LogIn } from "lucide-react";
-import { useAuthFlow } from "@/hooks/useAuthFlow";
+import { ROUTES } from "@/lib/routes";
 import { NAV_LINKS } from "./nav-links";
 
 interface MobileMenuProps {
@@ -18,14 +19,8 @@ export default function MobileMenu({
   panelId,
   onClose,
 }: MobileMenuProps) {
-  const { openAuth } = useAuthFlow();
   const reduceMotion = useReducedMotion();
   const seconds = (value: number) => (reduceMotion ? 0 : value);
-
-  const openAuthFromMenu = (type: "join" | "login") => {
-    onClose();
-    openAuth(type);
-  };
 
   return (
     <AnimatePresence>
@@ -89,25 +84,25 @@ export default function MobileMenu({
               </nav>
 
               <div className="pt-3 border-t border-cr-dark/10 space-y-2.5">
-                <button
+                <Link
                   id="mobile-menu-join-now-btn"
-                  type="button"
-                  onClick={() => openAuthFromMenu("join")}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl bg-cr-pink hover:bg-cr-coral-hover text-white font-bold text-base shadow-md shadow-cr-pink/25 motion-safe:active:scale-[0.99] transition-all cursor-pointer min-h-[48px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                  href={ROUTES.signUp}
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl bg-cr-pink hover:bg-cr-coral-hover text-white font-bold text-base shadow-md shadow-cr-pink/25 motion-safe:active:scale-[0.99] transition-all min-h-[48px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
                 >
                   <span>Join Now</span>
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                </button>
+                </Link>
 
-                <button
+                <Link
                   id="mobile-menu-login-btn"
-                  type="button"
-                  onClick={() => openAuthFromMenu("login")}
-                  className="w-full py-3 px-4 rounded-2xl border border-cr-dark/15 bg-white hover:bg-stone-50 active:bg-stone-100 font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
+                  href={ROUTES.signIn}
+                  onClick={onClose}
+                  className="w-full py-3 px-4 rounded-2xl border border-cr-dark/15 bg-white hover:bg-stone-50 active:bg-stone-100 font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cr-pink"
                 >
                   <LogIn className="w-4 h-4" aria-hidden="true" />
                   <span>Log in</span>
-                </button>
+                </Link>
               </div>
             </div>
           </motion.div>

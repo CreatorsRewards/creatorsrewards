@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
-import FooterAction from "./FooterAction";
 import { FOOTER_COLUMNS, FOOTER_LINK_CLASSES } from "./footer-links";
 
-/** Server component: only the buttons inside it (FooterAction) run in the browser. */
+/** A server component: no JavaScript is sent to the browser for it. */
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -29,14 +29,15 @@ export default function Footer() {
                 <ul className="space-y-2.5">
                   {column.items.map((item) => (
                     <li key={item.name}>
-                      {"href" in item ? (
+                      {item.href.startsWith("/#") ? (
+                        // Section anchors on the landing page: a plain link works from any page.
                         <a href={item.href} className={FOOTER_LINK_CLASSES}>
                           {item.name}
                         </a>
                       ) : (
-                        <FooterAction action={item.action}>
+                        <Link href={item.href} className={FOOTER_LINK_CLASSES}>
                           {item.name}
-                        </FooterAction>
+                        </Link>
                       )}
                     </li>
                   ))}

@@ -1,74 +1,65 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { saveCampaignDraft } from "@/lib/campaign-draft";
+import { signInHref, signUpHref } from "@/lib/routes";
 
 export type AuthType = "login" | "join" | "creator" | "brand";
 
-/** Details carried from a section into the auth modal. Empty strings mean "not chosen". */
+/** Details carried from a section to campaign creation. Empty strings mean "not chosen". */
 export interface CampaignData {
   name: string;
   type: string;
   budget: string;
 }
 
-export interface AuthFlowState {
-  open: boolean;
-  type: AuthType;
-  campaignData: CampaignData | null;
-}
-
-/**
- * Everything a component needs to open the modal. These functions never change
- * identity, so components that only call them don't re-render when it opens.
- */
 export interface AuthActions {
+  /** "login" and "brand" go to sign-in; "join" and "creator" go to sign-up. */
   openAuth: (type?: AuthType) => void;
-  closeAuth: () => void;
+  /** Any "start / create a campaign" button. Goes to sign-in (a signed-in check comes later). */
   startCampaign: (details?: CampaignData | string) => void;
+  /** Any "join as a creator" button, optionally with the lane the visitor clicked. */
   joinCreator: (lane?: string) => void;
 }
 
-export const AuthActionsContext = createContext<AuthActions | null>(null);
+/**
+ * Sends visitors to the sign-up or sign-in page. The landing page sections
+ * call these functions, so the rules for where each button goes live here and
+ * nowhere else.
+ */
+export function useAuthFlow(): AuthActions {
+  const router = useRouter();
 
-/** State and actions behind <AuthProvider>. Use `useAuthFlow` in components instead. */
-export function useAuthFlowState() {
-  const [state, setState] = useState<AuthFlowState>({
-    open: false,
-    type: "join",
-    campaignData: null,
-  });
+  return useMemo<AuthActions>(
+    () => ({
+      openAuth: (type = "join") => {
+        if (type === "login") router.push(signInHref());
+        else if (type === "brand")
+          router.push(signInHref({ intent: "campaign" }));
+        else if (type === "creator")
+          router.push(signUpHref({ role: "creator" }));
+        else router.push(signUpHref());
+      },
 
-  const actions = useMemo<AuthActions>(() => {
-    const open = (type: AuthType, campaignData: CampaignData | null) =>
-      setState({ open: true, type, campaignData });
-
-    return {
-      openAuth: (type = "join") =>
-        setState((prev) => ({ ...prev, open: true, type })),
-      closeAuth: () => setState((prev) => ({ ...prev, open: false })),
       startCampaign: (details) => {
         if (typeof details === "object") {
-          open("brand", details);
+          saveCampaignDraft(details);
         } else if (typeof details === "string") {
-          // A category card: we know the topic, not the type or budget.
-          open("brand", { name: `${details} Campaign`, type: "", budget: "" });
-        } else {
-          open("brand", null);
+          // A category card: we know the topic, not the creator type or budget.
+          saveCampaignDraft({
+            name: `${details} Campaign`,
+            type: "",
+            budget: "",
+          });
         }
+        router.push(signInHref({ intent: "campaign" }));
       },
-      joinCreator: (lane) =>
-        open("creator", lane ? { name: "", type: lane, budget: "" } : null),
-    };
-  }, []);
 
-  return { state, actions };
-}
-
-/** Open the shared auth modal from any client component under <AuthProvider>. */
-export function useAuthFlow(): AuthActions {
-  const actions = useContext(AuthActionsContext);
-  if (!actions) {
-    throw new Error("useAuthFlow must be used inside <AuthProvider>.");
-  }
-  return actions;
+      joinCreator: (lane) => {
+        router.push(signUpHref({ role: "creator", lane }));
+      },
+    }),
+    [router],
+  );
 }
