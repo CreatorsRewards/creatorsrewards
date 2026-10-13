@@ -18,12 +18,9 @@ const cabinetGrotesk = localFont({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "CreatorsRewards — Africa's Performance Creator Platform",
-    template: "%s | CreatorsRewards",
-  },
+  title: "CreatorsRewards Get Paid. Stay You. Create More",
   description:
-    "CreatorsRewards connects African UGC creators, clippers, and micro-influencers with brands who pay for results, not promises.",
+    "CreatorsRewards is a platform that allows content creators to monetize their work and connect with their audience.",
 };
 
 export default function RootLayout({
