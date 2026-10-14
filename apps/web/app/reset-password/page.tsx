@@ -219,7 +219,7 @@ function ResetPasswordForm() {
               href="/forgot-password"
               className={`${BUTTON} no-underline`}
             >
-              Request a new code
+              Request a new link
             </Link>
           </div>
         ) : (
