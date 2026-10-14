@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react"; // Keep Lucide for UI icons
-// Import brand icons from the Simple Icons (si) pack
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import {
   SiGoogle,
   SiYoutube,
@@ -11,17 +12,40 @@ import {
   SiTiktok,
   SiSnapchat,
 } from "react-icons/si";
-import { useRouter } from "next/navigation";
-import { Provider } from "../sign-up/page";
-import React from "react";
+import type { IconType } from "react-icons";
+// `import type` so the page file isn't pulled in at runtime. Better still,
+// move `Provider` to a shared types file and import it from there.
+import type { Provider } from "../sign-up/page";
+
+// Add, remove or reorder providers here
+const OAUTH_PROVIDERS: {
+  provider: Provider;
+  label: string;
+  icon: IconType;
+  color: string;
+}[] = [
+  { provider: "google", label: "Google", icon: SiGoogle, color: "#4285F4" },
+  { provider: "youtube", label: "YouTube", icon: SiYoutube, color: "#FF0000" },
+  { provider: "instagram", label: "Instagram", icon: SiInstagram, color: "#E4405F" },
+  { provider: "x", label: "X", icon: SiX, color: "#000000" },
+  { provider: "tiktok", label: "TikTok", icon: SiTiktok, color: "#000000" },
+  { provider: "snapchat", label: "Snapchat", icon: SiSnapchat, color: "#FFFC00" },
+];
+
+const INPUT =
+  "w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-sm text-(--text-primary) outline-none transition-colors placeholder:text-black/40 focus:border-(--cr-pink)";
+const LABEL =
+  "text-xs font-medium uppercase tracking-wide text-(--text-primary)";
 
 export default function SignInPage() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleOAuthSignIn = (provider: Provider) => {
-    console.log(`Initiating OAuth for: ${provider}`);
-    // 1. OAuth requires a full browser navigation, not an AJAX/fetch call.
-    // 2. We hit the Next.js proxy (/api/auth/google), which forwards to NestJS.
+    // OAuth needs a full browser navigation, not fetch. The Next.js proxy
+    // (/api/auth/:provider) forwards to NestJS.
     window.location.href = `/api/auth/${provider}`;
   };
 
@@ -29,178 +53,160 @@ export default function SignInPage() {
     e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
+    setError(null);
+    setSubmitting(true);
 
-    // Grab the values directly from the form
     const formData = new FormData(e.currentTarget);
-    const identifier = formData.get("identifier");
-    const password = formData.get("password");
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
 
     try {
-      // Call the proxy route, which forwards to NestJS POST /auth/signin
+      // The proxy route forwards to NestJS POST /auth/signin
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Adjust the keys here to match exactly what your NestJS LoginDto expects
-        body: JSON.stringify({ email: identifier, password }),
+        body: JSON.stringify({ email, password }),
       });
+      const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        // Handle error (e.g., show toast notification to user)
-        const errorData = await res.json();
-        console.error("Login failed:", errorData.message);
+        const message = Array.isArray(data?.message)
+          ? data.message.join(", ")
+          : data?.message;
+        setError(message ?? "Incorrect email or password.");
         return;
       }
 
-      const data = await res.json();
-
-      // The JWT is returned here (data.accessToken).
-      // You can store it in localStorage, or ideally, set it as an HTTP-only cookie
-      console.log("Success! Token:", data.accessToken);
-
-      // Redirect to dashboard
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("An unexpected error occurred", error);
+      // Don't log or store the token here. Have the proxy route set it as an
+      // HTTP-only cookie instead, so page scripts can never read it.
+      router.push(data?.mustChangePassword ? "/change-password" : "/dashboard");
+    } catch {
+      setError("Something went wrong. Check your connection and try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-(--bg-page) flex flex-col items-center justify-center p-6 relative">
-      {/* --- BACK BUTTON --- */}
-      <div className="absolute top-6 left-6">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-sm text-muted no-underline hover:text-primary transition-colors"
-        >
-          <ArrowLeft size={16} strokeWidth={2} /> Back to Site
-        </Link>
-      </div>
+    // Swap bg-[#c8fce4] for your mint token if you have one
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#c8fce4] p-6">
+      <Link
+        href="/"
+        className="absolute left-6 top-6 flex items-center gap-1.5 text-sm text-(--text-muted) no-underline transition-colors hover:text-(--text-primary)"
+      >
+        <ArrowLeft size={16} strokeWidth={2} /> Back to Site
+      </Link>
 
-      {/* --- LOGIN CARD --- */}
-      <div className="w-full max-w-100 bg-(--bg-card) border border-(--border) rounded-2xl p-10 shadow-sm">
-        {/* HEADER */}
-        <div className="text-center mb-8">
-          <h1 className="font-(family-name:--font-display) text-2xl font-bold mb-2 text-(--text-primary)">
-            Welcome Back
-          </h1>
-          <p className="text-(--text-muted) text-sm">
-            Sign in to your creator account
-          </p>
-        </div>
+      <div className="w-full max-w-sm">
+        {/* Header */}
+        <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-(--cr-pink) px-3 py-1.5 text-xs font-medium text-white">
+          <span aria-hidden>👋</span> Good to see you again
+        </span>
+        <h1 className="mb-1 font-(family-name:--font-display) text-3xl font-bold text-(--text-primary)">
+          Welcome back
+        </h1>
+        <p className="mb-8 text-sm text-(--text-muted)">
+          Log in to keep earning
+        </p>
 
-        {/* --- CREDENTIALS FORM --- */}
-        <form
-          onSubmit={handleCredentialsSignIn}
-          className="flex flex-col gap-4 mb-6"
-        >
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="identifier"
-              className="text-sm font-medium text-(--text-primary)"
+        {/* Credentials form */}
+        <form onSubmit={handleCredentialsSignIn} className="flex flex-col gap-5">
+          {error && (
+            <p
+              role="alert"
+              className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
             >
-              Email or Username
+              {error}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className={LABEL}>
+              Email
             </label>
             <input
-              id="identifier"
-              name="identifier"
-              type="text"
-              placeholder="you@example.com"
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="amara@email.com"
               required
-              className="w-full p-3 rounded-lg border border-(--border) bg-transparent box-border outline-none focus:border-(--violet) transition-colors text-(--text-primary)"
+              className={INPUT}
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-(--text-primary)"
+            <label htmlFor="password" className={LABEL}>
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="••••••••••••"
+                required
+                className={`${INPUT} pr-12`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-black/50 hover:text-black/80"
               >
-                Password
-              </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-(--text-muted) no-underline hover:text-(--violet) transition-colors"
-              >
-                Forgot?
-              </Link>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              required
-              className="w-full p-3 rounded-lg border border-(--border) bg-transparent box-border outline-none focus:border-(--violet) transition-colors text-(--text-primary)"
-            />
           </div>
+
+          <Link
+            href="/forgot-password"
+            className="self-end text-sm font-medium text-(--cr-pink) no-underline hover:opacity-80"
+          >
+            Forgot password?
+          </Link>
 
           <button
             type="submit"
-            className="w-full p-3 mt-2 rounded-lg bg-(--cr-pink) text-white font-semibold border-none cursor-pointer hover:opacity-90 transition-opacity"
+            disabled={submitting}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--cr-pink) p-3.5 font-semibold text-stone-900 transition-opacity hover:opacity-90 disabled:opacity-60"
           >
-            Sign In
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            Log In
           </button>
         </form>
 
-        {/* --- DIVIDER --- */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 h-px bg-(--border)" />
-          <span className="text-xs text-(--text-muted) uppercase tracking-wider">
+        <p className="mt-6 text-center text-sm text-(--text-muted)">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/sign-up"
+            className="font-medium text-(--cr-pink) no-underline hover:opacity-80"
+          >
+            Sign Up
+          </Link>
+        </p>
+
+        {/* OAuth: delete this block if you only want email + password */}
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-black/10" />
+          <span className="text-xs uppercase tracking-wider text-(--text-muted)">
             Or continue with
           </span>
-          <div className="flex-1 h-px bg-(--border)" />
+          <div className="h-px flex-1 bg-black/10" />
         </div>
 
-        {/* --- OAUTH BUTTONS --- */}
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("google")}
-          >
-            <SiGoogle size={18} color="#4285F4" /> Continue with Google
-          </button>
-
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("youtube")}
-          >
-            <SiYoutube size={18} color="#FF0000" /> Continue with YouTube
-          </button>
-
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("instagram")}
-          >
-            <SiInstagram size={18} color="#E4405F" /> Continue with Instagram
-          </button>
-
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("x")}
-          >
-            <SiX size={18} color="#000000" /> Continue with X
-          </button>
-
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("tiktok")}
-          >
-            <SiTiktok size={18} color="#000000" /> Continue with TikTok
-          </button>
-
-          <button
-            type="button"
-            className="btn-ghost w-full"
-            onClick={() => handleOAuthSignIn("snapchat")}
-          >
-            <SiSnapchat size={18} color="#FFFC00" /> Continue with Snapchat
-          </button>
+        <div className="grid grid-cols-2 gap-3">
+          {OAUTH_PROVIDERS.map(({ provider, label, icon: Icon, color }) => (
+            <button
+              key={provider}
+              type="button"
+              className="btn-ghost w-full"
+              onClick={() => handleOAuthSignIn(provider)}
+            >
+              <Icon size={18} color={color} /> {label}
+            </button>
+          ))}
         </div>
       </div>
     </div>
