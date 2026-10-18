@@ -6,6 +6,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -20,6 +21,7 @@ enum UserRole {
   UGC_CREATOR
   CLIPPER
   SUPER_ADMIN
+  ADMIN
   CUSTOMER_REP
   BRAND // Added for future-proofing, though brands might be managed separately in MVP
 }
@@ -119,13 +121,20 @@ model waitlist_entries {
 
 model User {
   id                         String        @id @default(uuid())
-  email                      String        @unique
-  passwordHash               String
-  fullName                   String
-  country                    String
-  role                       UserRole
+  email                      String?        @unique
+  passwordHash               String?
+  fullName                   String?
+  country                    String?
+  phone                      String?
+  role                       UserRole      @default(UGC_CREATOR)
+  mustChangePassword         Boolean @default(false)
+  credentialsSentAt   DateTime? // null = converted but login details never sent
+  credentialsExpiresAt DateTime? // temp password stops working after this
   accountStatus              AccountStatus @default(PENDING_VERIFICATION)
   failedVerificationAttempts Int           @default(0) // Locks after 2 fails
+
+  authProvider               String        @default("local") // 'local', 'google', 'tiktok', etc.
+  authProviderId             String?       @unique           // The unique ID from Google/TikTok
 
   // Payment Details
   bankDetails                Json?         // Stores bank name, account number, etc. (for NGN)
