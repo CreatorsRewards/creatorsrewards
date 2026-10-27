@@ -16,9 +16,8 @@ export const FOOTER_LINK_CLASSES =
 const CREATOR_SIGN_UP = signUpHref({ role: "creator" });
 const START_CAMPAIGN = signInHref({ intent: "campaign" });
 
-// TODO: "Platform" and "Legal" point at landing-page sections as placeholders.
-// Terms, Privacy and the Creator Agreement need real pages (e.g. /terms,
-// /privacy), which a payments platform is expected to have.
+// Terms and the Creator Agreement remain landing-page placeholders until their
+// content is ready.
 export const FOOTER_COLUMNS: readonly FooterColumn[] = [
   {
     title: "Creators",
@@ -50,8 +49,8 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
   {
     title: "Legal",
     items: [
-      { name: "Terms of Service", href: "/#why-us" },
-      { name: "Privacy Policy", href: "/#why-us" },
+      { name: "Terms of Service", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy" },
       { name: "Creator Agreement", href: "/#how-it-works" },
     ],
   },
