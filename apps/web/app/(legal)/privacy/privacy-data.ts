@@ -307,10 +307,6 @@ export const privacySections: PrivacySection[] = [
         label: "Email: contact@creatorsrewards.net",
         href: "mailto:contact@creatorsrewards.net",
       },
-      {
-        label: "Website: creatorsrewards.net",
-        href: "https://creatorsrewards.net",
-      },
     ],
   },
 ];

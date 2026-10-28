@@ -29,6 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${clashDisplay.variable} ${cabinetGrotesk.variable}`}
     >
       <body>{children}</body>
