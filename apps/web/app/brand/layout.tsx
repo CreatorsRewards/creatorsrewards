@@ -1,22 +1,23 @@
 import { ReactNode } from "react";
+import {
+  BrandBottomNav,
+  BrandSidebar,
+} from "../components/brand/BrandNav";
 
 export default function BrandLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* BRAND SIDEBAR PLACEHOLDER */}
-      <aside className="w-64 bg-white border-r border-gray-200 p-4">
-        <h2 className="text-xl font-bold mb-6">Brand Hub</h2>
-        <nav className="space-y-2">
-          <a href="/brand" className="block p-2 rounded hover:bg-gray-100">Dashboard</a>
-          <a href="/brand/uploads" className="block p-2 rounded hover:bg-gray-100">My Videos</a>
-          <a href="/brand/analytics" className="block p-2 rounded hover:bg-gray-100">Analytics</a>
-        </nav>
-      </aside>
+    // Swap bg-[#171212] for your dark token if you have one
+    <div className="min-h-screen bg-[#171212] text-white">
+      <BrandSidebar />
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-8">
-        {children}
-      </main>
+      <div className="lg:pl-64">
+        {/* Bottom padding keeps content clear of the mobile tab bar */}
+        <main className="mx-auto max-w-6xl px-5 pb-28 pt-6 lg:px-10 lg:pb-10 lg:pt-10">
+          {children}
+        </main>
+      </div>
+
+      <BrandBottomNav />
     </div>
   );
 }
