@@ -66,10 +66,20 @@ const OAUTH_PROVIDERS: {
 }[] = [
   { provider: "google", label: "Google", icon: SiGoogle, color: "#4285F4" },
   { provider: "youtube", label: "YouTube", icon: SiYoutube, color: "#FF0000" },
-  { provider: "instagram", label: "Instagram", icon: SiInstagram, color: "#E4405F" },
+  {
+    provider: "instagram",
+    label: "Instagram",
+    icon: SiInstagram,
+    color: "#E4405F",
+  },
   { provider: "x", label: "X", icon: SiX, color: "#000000" },
   { provider: "tiktok", label: "TikTok", icon: SiTiktok, color: "#000000" },
-  { provider: "snapchat", label: "Snapchat", icon: SiSnapchat, color: "#FFFC00" },
+  {
+    provider: "snapchat",
+    label: "Snapchat",
+    icon: SiSnapchat,
+    color: "#FFFC00",
+  },
 ];
 
 const INPUT =
