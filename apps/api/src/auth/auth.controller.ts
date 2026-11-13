@@ -7,6 +7,7 @@ import {
   Query,
   // Request,
   Res,
+  UnauthorizedException,
   // UseGuards,
 } from '@nestjs/common';
 
@@ -26,16 +27,53 @@ export class AuthController {
     private readonly oauthService: OAuthService,
   ) {}
 
+  // Helper method to keep cookie configuration DRY
+  private setTokenCookie(res: Response, token: string) {
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+  }
+
   // --- LOCAL AUTH ROUTES ---
 
   @Post('register')
-  async register(@Body() dto: RegisterDto): Promise<JwtAuthResponse> {
-    return this.authService.register(dto);
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<JwtAuthResponse> {
+    // 1. Service handles database + generates token string
+    const { accessToken } = await this.authService.register(dto);
+
+    if (!accessToken) {
+      throw new UnauthorizedException('Authentication failed');
+    }
+
+    // 2. Controller handles setting the cookie
+    this.setTokenCookie(res, accessToken);
+
+    return { message: 'Registered successfully' };
   }
 
   @Post('signin')
-  async signIn(@Body() dto: LoginDto): Promise<JwtAuthResponse> {
-    return this.authService.login(dto);
+  async signIn(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<JwtAuthResponse> {
+    // 1. Service validates credentials + generates token string
+    const { accessToken } = await this.authService.login(dto);
+    //Check if it exists first
+
+    if (!accessToken) {
+      throw new UnauthorizedException('Authentication failed');
+    }
+
+    // 2. Controller handles setting the cookie
+    this.setTokenCookie(res, accessToken);
+
+    return { message: 'Signed in successfully' };
   }
 
   // --- OAUTH ROUTES ---
@@ -53,16 +91,24 @@ export class AuthController {
   async callback(
     @Param('provider') provider: string,
     @Query('code') code: string,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
-    // Orchestrate the token exchange and user creation
+    // authService.loginOAuthUser logic here, set the cookie on `res`,
+    // and then redirect the user to your frontend dashboard without passing the token in the URL query string!
     const jwtContent = (await this.oauthService.handleCallback(
       provider,
       code,
-    )) as JwtAuthResponse;
+    )) as { accessToken: string };
 
-    // Redirect back to your frontend with YOUR token
-    const frontendRedirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${jwtContent.accessToken}`;
+    //Check if it exists first
+    if (!jwtContent || !jwtContent.accessToken) {
+      throw new UnauthorizedException('Authentication failed');
+    }
+
+    // Setting it as a cookie during OAuth callback is much more secure than passing it via URL query params:
+    this.setTokenCookie(res, jwtContent.accessToken);
+
+    const frontendRedirectUrl = `${process.env.FRONTEND_URL}/dashboard`; // No token leak in URL query!
     res.redirect(frontendRedirectUrl);
   }
 }
