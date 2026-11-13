@@ -200,7 +200,7 @@ export default function SignUpPage() {
 
       // No token logging or storage here. Have the proxy route set it as an
       // HTTP-only cookie instead.
-      router.push("/dashboard");
+      router.push(role === "UGC_CREATOR" ? "creator" : "brand");
     } catch {
       setError("Something went wrong. Check your connection and try again.");
     } finally {
