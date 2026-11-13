@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { UserRole } from 'src/generated/prisma/enums';
 
 export class RegisterDto {
   @IsEmail()
@@ -11,6 +12,10 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   fullName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role?: UserRole; // e.g., "UGC_CREATOR" or "BRAND"
 }
 
 export class LoginDto {
