@@ -66,10 +66,20 @@ const OAUTH_PROVIDERS: {
 }[] = [
   { provider: "google", label: "Google", icon: SiGoogle, color: "#4285F4" },
   { provider: "youtube", label: "YouTube", icon: SiYoutube, color: "#FF0000" },
-  { provider: "instagram", label: "Instagram", icon: SiInstagram, color: "#E4405F" },
+  {
+    provider: "instagram",
+    label: "Instagram",
+    icon: SiInstagram,
+    color: "#E4405F",
+  },
   { provider: "x", label: "X", icon: SiX, color: "#000000" },
   { provider: "tiktok", label: "TikTok", icon: SiTiktok, color: "#000000" },
-  { provider: "snapchat", label: "Snapchat", icon: SiSnapchat, color: "#FFFC00" },
+  {
+    provider: "snapchat",
+    label: "Snapchat",
+    icon: SiSnapchat,
+    color: "#FFFC00",
+  },
 ];
 
 const INPUT =
@@ -200,7 +210,7 @@ export default function SignUpPage() {
 
       // No token logging or storage here. Have the proxy route set it as an
       // HTTP-only cookie instead.
-      router.push("/dashboard");
+      router.push(role === "UGC_CREATOR" ? "creator" : "brand");
     } catch {
       setError("Something went wrong. Check your connection and try again.");
     } finally {

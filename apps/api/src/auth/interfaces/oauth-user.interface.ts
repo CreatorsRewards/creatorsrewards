@@ -13,5 +13,6 @@ export interface OAuthUser {
 }
 
 export interface JwtAuthResponse {
-  accessToken: string;
+  accessToken?: string;
+  message?: string;
 }

@@ -97,6 +97,8 @@ export class AuthService {
         passwordHash,
         fullName: dto.fullName,
         authProvider: 'local', // Default based on your Prisma schema
+        authProviderId: null, // Default based on your Prisma schema
+        role: dto.role,
       },
     });
 
