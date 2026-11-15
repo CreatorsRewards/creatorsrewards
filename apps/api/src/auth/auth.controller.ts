@@ -63,7 +63,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<JwtAuthResponse> {
     // 1. Service validates credentials + generates token string
-    const { accessToken } = await this.authService.login(dto);
+    const { accessToken, role, mustChangePassword } =
+      await this.authService.login(dto);
     //Check if it exists first
 
     if (!accessToken) {
@@ -73,7 +74,7 @@ export class AuthController {
     // 2. Controller handles setting the cookie
     this.setTokenCookie(res, accessToken);
 
-    return { message: 'Signed in successfully' };
+    return { message: 'Signed in successfully', role, mustChangePassword };
   }
 
   // --- OAUTH ROUTES ---

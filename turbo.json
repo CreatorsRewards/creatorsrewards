@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalEnv": ["NEST_API_URL", "NEXT_PUBLIC_API_URL"],
+  "globalEnv": ["NEST_API_URL", "NEXT_PUBLIC_API_URL, JWT_SECRET"],
   "ui": "tui",
   "tasks": {
     "build": {

@@ -15,4 +15,6 @@ export interface OAuthUser {
 export interface JwtAuthResponse {
   accessToken?: string;
   message?: string;
+  role?: string;
+  mustChangePassword?: boolean;
 }
