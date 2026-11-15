@@ -26,10 +26,20 @@ const OAUTH_PROVIDERS: {
 }[] = [
   { provider: "google", label: "Google", icon: SiGoogle, color: "#4285F4" },
   { provider: "youtube", label: "YouTube", icon: SiYoutube, color: "#FF0000" },
-  { provider: "instagram", label: "Instagram", icon: SiInstagram, color: "#E4405F" },
+  {
+    provider: "instagram",
+    label: "Instagram",
+    icon: SiInstagram,
+    color: "#E4405F",
+  },
   { provider: "x", label: "X", icon: SiX, color: "#000000" },
   { provider: "tiktok", label: "TikTok", icon: SiTiktok, color: "#000000" },
-  { provider: "snapchat", label: "Snapchat", icon: SiSnapchat, color: "#FFFC00" },
+  {
+    provider: "snapchat",
+    label: "Snapchat",
+    icon: SiSnapchat,
+    color: "#FFFC00",
+  },
 ];
 
 const INPUT =
@@ -79,7 +89,13 @@ export default function SignInPage() {
 
       // Don't log or store the token here. Have the proxy route set it as an
       // HTTP-only cookie instead, so page scripts can never read it.
-      router.push(data?.mustChangePassword ? "/change-password" : "/dashboard");
+      router.push(
+        data?.mustChangePassword
+          ? "/change-password"
+          : data.role === "UGC_CREATOR"
+            ? "creator"
+            : "brand",
+      );
     } catch {
       setError("Something went wrong. Check your connection and try again.");
     } finally {
@@ -110,7 +126,10 @@ export default function SignInPage() {
         </p>
 
         {/* Credentials form */}
-        <form onSubmit={handleCredentialsSignIn} className="flex flex-col gap-5">
+        <form
+          onSubmit={handleCredentialsSignIn}
+          className="flex flex-col gap-5"
+        >
           {error && (
             <p
               role="alert"
