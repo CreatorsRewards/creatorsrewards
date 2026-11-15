@@ -127,7 +127,13 @@ export class AuthService {
     }
 
     // 4. Return JWT
-    return this.generateToken(user);
+    const { accessToken } = this.generateToken(user);
+
+    return {
+      accessToken,
+      role: user.role,
+      mustChangePassword: user.mustChangePassword,
+    };
   }
 
   private generateToken(user: any): JwtAuthResponse {
