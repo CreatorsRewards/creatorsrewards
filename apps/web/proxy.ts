@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
 // Define role-to-dashboard mapping based on your switch case
-const ROLE_DASHBOARD_MAP: Record<string, string> = {
+export const ROLE_DASHBOARD_MAP: Record<string, string> = {
   SUPER_ADMIN: "/admin",
   CUSTOMER_REP: "/support",
   UGC_CREATOR: "/creator",
@@ -11,8 +11,9 @@ const ROLE_DASHBOARD_MAP: Record<string, string> = {
 };
 
 // Define route prefixes that require specific roles
-const ROLE_PROTECTED_ROUTES: Record<string, string[]> = {
+export const ROLE_PROTECTED_ROUTES: Record<string, string[]> = {
   SUPER_ADMIN: ["/admin"],
+  ADMIN: ["/admin"],
   CUSTOMER_REP: ["/support"],
   UGC_CREATOR: ["/creator"],
   CLIPPER: ["/clipper"],

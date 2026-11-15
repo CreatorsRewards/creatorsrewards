@@ -16,6 +16,7 @@ import type { IconType } from "react-icons";
 // `import type` so the page file isn't pulled in at runtime. Better still,
 // move `Provider` to a shared types file and import it from there.
 import type { Provider } from "../sign-up/page";
+import { ROLE_DASHBOARD_MAP } from "@/proxy";
 
 // Add, remove or reorder providers here
 const OAUTH_PROVIDERS: {
@@ -41,6 +42,7 @@ const OAUTH_PROVIDERS: {
     color: "#FFFC00",
   },
 ];
+
 
 const INPUT =
   "w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-sm text-(--text-primary) outline-none transition-colors placeholder:text-black/40 focus:border-(--cr-pink)";
@@ -89,13 +91,11 @@ export default function SignInPage() {
 
       // Don't log or store the token here. Have the proxy route set it as an
       // HTTP-only cookie instead, so page scripts can never read it.
-      router.push(
-        data?.mustChangePassword
-          ? "/change-password"
-          : data.role === "UGC_CREATOR"
-            ? "creator"
-            : "brand",
-      );
+      const destination = data?.mustChangePassword
+        ? "/change-password"
+        : ROLE_DASHBOARD_MAP[data.role] || "/brand";
+
+      router.push(destination);
     } catch {
       setError("Something went wrong. Check your connection and try again.");
     } finally {
